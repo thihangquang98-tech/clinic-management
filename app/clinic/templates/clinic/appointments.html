@@ -1,0 +1,281 @@
+{% extends "clinic/base.html" %}
+{% block title %}Quản lý lịch khám | ClinicCare{% endblock %}
+{% block content %}
+<style>
+.ap-page{color:#173653;max-width:1700px;margin:0 auto}
+.ap-heading{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:25px}
+.ap-heading h2{font-size:30px;font-weight:800;margin:0 0 8px;color:#102f4d}
+.ap-heading p{margin:0;color:#7186a1;font-size:14px}
+.ap-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#102b46;color:#fff!important;text-decoration:none;padding:14px 19px;border-radius:11px;font-weight:750;box-shadow:0 5px 12px #102b4620;white-space:nowrap}
+.ap-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:22px}
+.ap-stat{display:flex;align-items:center;gap:15px;background:#fff;border:1px solid #dfe8f3;border-radius:16px;padding:20px;min-height:94px;box-shadow:0 6px 20px #23456708}
+.ap-stat-icon{width:47px;height:47px;flex:0 0 47px;display:grid;place-items:center;border-radius:14px;font-size:23px}
+.ap-stat-label{font-size:12px;color:#7186a1;margin-bottom:5px}
+.ap-stat-value{font-size:25px;font-weight:800;color:#102f4d;line-height:1.1}
+.ap-card{background:#fff;border:1px solid #dfe8f3;border-radius:17px;overflow:hidden;box-shadow:0 6px 22px #23456708}
+.ap-card-head{padding:21px 23px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e2eaf3}
+.ap-card-head h3{margin:0 0 6px;font-size:17px;font-weight:800;color:#102f4d}
+.ap-card-head p{margin:0;color:#8192a8;font-size:12px}
+.ap-count{color:#6f86a3;font-size:12px;white-space:nowrap}
+.ap-filter{display:flex;align-items:center;gap:9px;padding:14px 19px;border-bottom:1px solid #e2eaf3}
+.ap-filter input,.ap-filter select{height:42px;box-sizing:border-box;border:1px solid #d8e3f0;border-radius:9px;background:#fff;color:#173653;padding:0 13px;font-size:13px;min-width:0}
+.ap-filter input{flex:1}
+.ap-filter select{width:165px}
+.ap-btn{height:42px;border:1px solid #d8e3f0;border-radius:9px;padding:0 18px;background:#3479cc;color:#fff;font-weight:750;cursor:pointer;white-space:nowrap}
+.ap-reset{display:inline-flex;height:42px;align-items:center;justify-content:center;padding:0 19px;border:1px solid #d8e3f0;border-radius:9px;color:#173653!important;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap}
+.ap-views{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 19px;border-bottom:1px solid #e2eaf3}
+.ap-tabs{display:flex;gap:4px;background:#eff3f9;padding:4px;border-radius:10px}
+.ap-tabs button{border:0;background:transparent;color:#60758d;border-radius:7px;padding:10px 14px;font-weight:700;font-size:12px;cursor:pointer}
+.ap-tabs button.active{background:#fff;color:#102f4d;box-shadow:0 2px 6px #102b4612}
+.ap-date{display:flex;align-items:center;gap:7px}
+.ap-date button,.ap-date input{height:37px;border:1px solid #dbe5f0;border-radius:9px;background:#fff;color:#173653;padding:0 11px}
+.ap-date input{width:145px}
+.ap-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;padding:19px}
+.ap-column{min-width:0;border:1px solid #dfe8f3;border-radius:13px;overflow:hidden;background:#f6f8fc;align-self:start}
+.ap-column-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:13px 14px;border-bottom:1px solid #dfe8f3;font-size:12px;font-weight:800;color:#173653}
+.ap-column-count{background:#fff;border-radius:6px;padding:4px 8px}
+.ap-column-body{padding:9px;min-height:95px}
+.ap-appointment{padding:13px 12px;margin-bottom:9px;background:#eaf2ff;border:1px solid #d9e6fa;border-left:4px solid #3679d3;border-radius:11px;overflow-wrap:anywhere}
+.ap-appointment:last-child{margin-bottom:0}
+.ap-appointment.completed{background:#eef1f5;border-color:#e0e6ee;border-left-color:#718096}
+.ap-appointment.cancelled{background:#fff0f2;border-color:#f7dce0;border-left-color:#dc3545}
+.ap-time{font-size:11px;font-weight:800;color:#3479cc;margin-bottom:9px}
+.ap-appointment strong{display:block;font-size:13px;color:#173653;margin-bottom:9px}
+.ap-detail{font-size:11px;color:#7186a1;line-height:1.7}
+.ap-reason{font-size:11px;color:#405a76;margin-top:8px;line-height:1.5}
+.ap-item-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:11px;font-size:11px;font-weight:750}
+.ap-item-actions{display:flex;gap:6px}
+.ap-item-actions a{display:inline-flex;align-items:center;justify-content:center;background:#fff;border:1px solid #dce5ef;border-radius:7px;padding:6px 8px;text-decoration:none;color:#3479cc;font-size:11px}
+.ap-item-actions a:last-child{color:#dc3545}
+.ap-empty{font-size:11px;color:#91a1b4;padding:14px 0}
+.ap-table-wrap{overflow-x:auto;padding:0 19px 19px}
+.ap-table{width:100%;border-collapse:collapse;min-width:800px}
+.ap-table th{background:#f6f8fc;color:#536981;font-size:12px;text-align:left;padding:14px;border-top:1px solid #e2eaf3;border-bottom:1px solid #e2eaf3;white-space:nowrap}
+.ap-table td{padding:14px;border-bottom:1px solid #edf1f6;color:#314b66;font-size:12px;vertical-align:middle}
+.ap-status{display:inline-block;padding:6px 9px;border-radius:20px;font-size:11px;font-weight:750;white-space:nowrap}
+.ap-status.scheduled{background:#e8f1ff;color:#2865ba}
+.ap-status.completed{background:#e3f6ed;color:#16805c}
+.ap-status.cancelled{background:#ffebee;color:#c52e43}
+.ap-table-actions{display:flex;gap:10px;white-space:nowrap}
+.ap-table-actions a{color:#3479cc;text-decoration:none;font-weight:750}
+.ap-table-actions a:last-child{color:#dc3545}
+.ap-hidden{display:none!important}
+@media(max-width:1150px){.ap-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.ap-board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.ap-heading{align-items:flex-start;flex-direction:column}.ap-heading h2{font-size:25px}.ap-stats{grid-template-columns:1fr 1fr;gap:9px}.ap-stat{padding:13px;gap:9px}.ap-stat-icon{width:37px;height:37px;flex-basis:37px;font-size:19px}.ap-stat-value{font-size:21px}.ap-filter{flex-wrap:wrap}.ap-filter input{flex-basis:100%;width:100%}.ap-filter select{flex:1;width:auto}.ap-btn,.ap-reset{flex:1;padding:0 10px}.ap-views{align-items:flex-start;flex-direction:column}.ap-tabs{max-width:100%;flex-wrap:wrap}.ap-tabs button{padding:9px}.ap-date{flex-wrap:wrap}.ap-board{grid-template-columns:1fr;padding:12px}.ap-card-head{padding:17px}.ap-table-wrap{padding:0 10px 12px}}
+</style>
+
+<div class="ap-page">
+    <header class="ap-heading">
+        <div>
+            <h2>Quản lý lịch hẹn</h2>
+            <p>Theo dõi lịch khám, bệnh nhân và bác sĩ phụ trách một cách trực quan.</p>
+        </div>
+        <a class="ap-primary" href="{% url 'appointment_create' %}">＋ Thêm lịch hẹn</a>
+    </header>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding:12px 16px;margin:0 0 15px;border-radius:10px;background:#eaf7ef;color:#17663a">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <section class="ap-stats">
+        <article class="ap-stat"><div class="ap-stat-icon" style="background:#eaf2ff">🗓️</div><div><div class="ap-stat-label">Lịch hẹn trong kết quả</div><div class="ap-stat-value">{{ appointments|length }}</div></div></article>
+        <article class="ap-stat"><div class="ap-stat-icon" style="background:#fff2d9">⏳</div><div><div class="ap-stat-label">Đã đặt lịch</div><div class="ap-stat-value" id="ap-stat-scheduled">0</div></div></article>
+        <article class="ap-stat"><div class="ap-stat-icon" style="background:#e2f7ed">✓</div><div><div class="ap-stat-label">Đã khám</div><div class="ap-stat-value" id="ap-stat-completed">0</div></div></article>
+        <article class="ap-stat"><div class="ap-stat-icon" style="background:#ffebef">×</div><div><div class="ap-stat-label">Đã hủy</div><div class="ap-stat-value" id="ap-stat-cancelled">0</div></div></article>
+    </section>
+
+    <section class="ap-card">
+        <div class="ap-card-head">
+            <div><h3>Danh sách lịch hẹn</h3><p>Thông tin bệnh nhân, bác sĩ, thời gian khám và trạng thái xử lý.</p></div>
+            <span class="ap-count">{{ appointments|length }} lịch</span>
+        </div>
+
+        <form method="get" class="ap-filter" id="ap-filter-form">
+            <input name="q" value="{{ query }}" placeholder="⌕  Tìm mã bệnh nhân, tên bệnh nhân, bác sĩ...">
+            <select name="status" aria-label="Lọc theo trạng thái">
+                <option value="">Tất cả trạng thái</option>
+                <option value="scheduled" {% if selected_status == "scheduled" %}selected{% endif %}>Đã đặt lịch</option>
+                <option value="completed" {% if selected_status == "completed" %}selected{% endif %}>Đã khám</option>
+                <option value="cancelled" {% if selected_status == "cancelled" %}selected{% endif %}>Đã hủy</option>
+            </select>
+            <button class="ap-btn" type="submit">⌕ Tìm kiếm</button>
+            <a class="ap-reset" href="{% url 'appointments' %}">Đặt lại</a>
+        </form>
+
+        <div class="ap-views">
+            <div class="ap-tabs" role="group" aria-label="Chế độ xem">
+                <button type="button" data-view="day">Theo ngày</button>
+                <button type="button" data-view="week">Theo tuần</button>
+                <button type="button" data-view="status" class="active">Trạng thái</button>
+                <button type="button" data-view="list">Danh sách</button>
+            </div>
+            <div class="ap-date">
+                <button type="button" id="ap-prev" aria-label="Ngày trước">‹</button>
+                <input type="date" id="ap-date" aria-label="Chọn ngày">
+                <button type="button" id="ap-next" aria-label="Ngày sau">›</button>
+                <button type="button" id="ap-today">Hôm nay</button>
+            </div>
+        </div>
+
+        <div class="ap-board" id="ap-board">
+            {% for key,label,icon in status_columns %}
+            {% endfor %}
+            <section class="ap-column" data-column="scheduled">
+                <div class="ap-column-head"><span>◷ Đã đặt lịch</span><span class="ap-column-count" id="ap-count-scheduled">0</span></div>
+                <div class="ap-column-body" id="ap-col-scheduled">
+                    {% for item in appointments %}{% if item.status == "scheduled" %}
+                    <article class="ap-appointment" data-status="scheduled" data-date="{{ item.appointment_time|date:'Y-m-d' }}" data-time="{{ item.appointment_time|date:'H:i' }}">
+                        <div class="ap-time">{{ item.appointment_time|date:"H:i" }} · Lịch #{{ item.id }}</div>
+                        <strong>{{ item.patient.full_name }}</strong>
+                        <div class="ap-detail">Mã lịch: #{{ item.id }}<br>Bác sĩ: {{ item.doctor.full_name }}<br>Ngày khám: {{ item.appointment_time|date:"d/m/Y H:i" }}</div>
+                        <div class="ap-reason"><b>Lý do:</b> {{ item.reason|default:"Chưa cập nhật" }}</div>
+                        <div class="ap-item-foot"><span>◷ Đã đặt lịch</span><div class="ap-item-actions"><a href="{% url 'appointment_update' item.id %}" aria-label="Sửa lịch {{ item.id }}">✎</a><a href="{% url 'appointment_delete' item.id %}" aria-label="Xóa lịch {{ item.id }}">⌫</a></div></div>
+                    </article>
+                    {% endif %}{% endfor %}
+                    <div class="ap-empty ap-hidden" data-empty="scheduled">Chưa có lịch hẹn</div>
+                </div>
+            </section>
+
+            <section class="ap-column" data-column="confirmed">
+                <div class="ap-column-head"><span>✓ Đã xác nhận</span><span class="ap-column-count" id="ap-count-confirmed">0</span></div>
+                <div class="ap-column-body"><div class="ap-empty">Hệ thống hiện không có trạng thái xác nhận riêng.</div></div>
+            </section>
+
+            <section class="ap-column" data-column="completed">
+                <div class="ap-column-head"><span>♧ Đã khám</span><span class="ap-column-count" id="ap-count-completed">0</span></div>
+                <div class="ap-column-body" id="ap-col-completed">
+                    {% for item in appointments %}{% if item.status == "completed" %}
+                    <article class="ap-appointment completed" data-status="completed" data-date="{{ item.appointment_time|date:'Y-m-d' }}" data-time="{{ item.appointment_time|date:'H:i' }}">
+                        <div class="ap-time">{{ item.appointment_time|date:"H:i" }} · Lịch #{{ item.id }}</div>
+                        <strong>{{ item.patient.full_name }}</strong>
+                        <div class="ap-detail">Mã lịch: #{{ item.id }}<br>Bác sĩ: {{ item.doctor.full_name }}<br>Ngày khám: {{ item.appointment_time|date:"d/m/Y H:i" }}</div>
+                        <div class="ap-reason"><b>Lý do:</b> {{ item.reason|default:"Chưa cập nhật" }}</div>
+                        <div class="ap-item-foot"><span>✓ Đã khám</span><div class="ap-item-actions"><a href="{% url 'appointment_update' item.id %}" aria-label="Sửa lịch {{ item.id }}">✎</a><a href="{% url 'appointment_delete' item.id %}" aria-label="Xóa lịch {{ item.id }}">⌫</a></div></div>
+                    </article>
+                    {% endif %}{% endfor %}
+                    <div class="ap-empty ap-hidden" data-empty="completed">Chưa có lịch hẹn</div>
+                </div>
+            </section>
+
+            <section class="ap-column" data-column="cancelled">
+                <div class="ap-column-head"><span>× Đã hủy</span><span class="ap-column-count" id="ap-count-cancelled">0</span></div>
+                <div class="ap-column-body" id="ap-col-cancelled">
+                    {% for item in appointments %}{% if item.status == "cancelled" %}
+                    <article class="ap-appointment cancelled" data-status="cancelled" data-date="{{ item.appointment_time|date:'Y-m-d' }}" data-time="{{ item.appointment_time|date:'H:i' }}">
+                        <div class="ap-time">{{ item.appointment_time|date:"H:i" }} · Lịch #{{ item.id }}</div>
+                        <strong>{{ item.patient.full_name }}</strong>
+                        <div class="ap-detail">Mã lịch: #{{ item.id }}<br>Bác sĩ: {{ item.doctor.full_name }}<br>Ngày khám: {{ item.appointment_time|date:"d/m/Y H:i" }}</div>
+                        <div class="ap-reason"><b>Lý do:</b> {{ item.reason|default:"Chưa cập nhật" }}</div>
+                        <div class="ap-item-foot"><span>× Đã hủy</span><div class="ap-item-actions"><a href="{% url 'appointment_update' item.id %}" aria-label="Sửa lịch {{ item.id }}">✎</a><a href="{% url 'appointment_delete' item.id %}" aria-label="Xóa lịch {{ item.id }}">⌫</a></div></div>
+                    </article>
+                    {% endif %}{% endfor %}
+                    <div class="ap-empty ap-hidden" data-empty="cancelled">Chưa có lịch hẹn</div>
+                </div>
+            </section>
+        </div>
+
+        <div class="ap-table-wrap ap-hidden" id="ap-list">
+            <table class="ap-table">
+                <thead><tr><th>Mã lịch</th><th>Bệnh nhân</th><th>Bác sĩ</th><th>Thời gian</th><th>Lý do khám</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+                <tbody>
+                {% for item in appointments %}
+                    <tr data-list-row data-status="{{ item.status }}" data-date="{{ item.appointment_time|date:'Y-m-d' }}" data-time="{{ item.appointment_time|date:'H:i' }}">
+                        <td>#{{ item.id }}</td><td><strong>{{ item.patient.full_name }}</strong></td><td>{{ item.doctor.full_name }}</td>
+                        <td>{{ item.appointment_time|date:"d/m/Y H:i" }}</td><td>{{ item.reason|default:"Chưa cập nhật" }}</td>
+                        <td><span class="ap-status {{ item.status }}">{% if item.status == "scheduled" %}Đã đặt lịch{% elif item.status == "completed" %}Đã khám{% else %}Đã hủy{% endif %}</span></td>
+                        <td><div class="ap-table-actions"><a href="{% url 'appointment_update' item.id %}">Sửa</a><form method="post"
+      action="{% url 'appointment_delete' item.id %}"
+      style="display:inline"
+      onsubmit="return confirm('Bạn có chắc chắn muốn xóa lịch hẹn này không?');">
+    {% csrf_token %}
+    <button type="submit"
+            style="background:none;border:none;color:#dc3545;cursor:pointer;">
+        Xóa
+    </button>
+</form></div></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7">Không có lịch hẹn phù hợp.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script>
+(function(){
+    const root=document.querySelector('.ap-page');
+    if(!root)return;
+    const cards=[...root.querySelectorAll('.ap-appointment')];
+    const rows=[...root.querySelectorAll('[data-list-row]')];
+    const dateInput=document.getElementById('ap-date');
+    const board=document.getElementById('ap-board');
+    const list=document.getElementById('ap-list');
+    const columns=[...root.querySelectorAll('[data-column]')];
+    let view='status';
+    const pad=n=>String(n).padStart(2,'0');
+    const fmt=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+    const today=new Date();
+    dateInput.value=fmt(today);
+    function dateOf(el){return el.dataset.date||'';}
+    function update(){
+        const selected=dateInput.value;
+        const pivot=new Date(selected+'T12:00:00');
+        let start=new Date(pivot),end=new Date(pivot);
+        if(view==='week'){const day=(pivot.getDay()+6)%7;start.setDate(pivot.getDate()-day);end.setDate(start.getDate()+6);}
+        const a=fmt(start),b=fmt(end);
+        const counts={scheduled:0,completed:0,cancelled:0};
+        cards.forEach(el=>{
+            const st=el.dataset.status;
+            counts[st]=(counts[st]||0)+1;
+            const d=dateOf(el);
+            const dateOK=view==='status'||view==='list'||(d>=a&&d<=b);
+            const statusFilter=root.querySelector('select[name="status"]').value;
+            const visible=dateOK&&(!statusFilter||st===statusFilter);
+            el.classList.toggle('ap-hidden',!visible);
+        });
+        rows.forEach(el=>{
+            const d=dateOf(el),st=el.dataset.status;
+            const dateOK=view==='status'||view==='list'||(d>=a&&d<=b);
+            const statusFilter=root.querySelector('select[name="status"]').value;
+            el.classList.toggle('ap-hidden',!(dateOK&&(!statusFilter||st===statusFilter)));
+        });
+        ['scheduled','completed','cancelled'].forEach(st=>{
+            document.getElementById('ap-stat-'+st).textContent=counts[st]||0;
+            document.getElementById('ap-count-'+st).textContent=counts[st]||0;
+            const visible=[...root.querySelectorAll('.ap-appointment[data-status="'+st+'"]')].some(el=>!el.classList.contains('ap-hidden'));
+            const empty=root.querySelector('[data-empty="'+st+'"]');
+            if(empty)empty.classList.toggle('ap-hidden',visible);
+        });
+        board.classList.toggle('ap-hidden',view==='list');
+        list.classList.toggle('ap-hidden',view!=='list');
+        columns.forEach(col=>{
+            const st=col.dataset.column;
+            col.classList.toggle('ap-hidden',view==='status'&&st==='confirmed');
+        });
+        if(view==='day'||view==='week'){
+            columns.forEach(col=>{
+                const st=col.dataset.column;
+                if(st==='confirmed')return;
+                const has=[...col.querySelectorAll('.ap-appointment')].some(el=>!el.classList.contains('ap-hidden'));
+                col.classList.toggle('ap-hidden',!has);
+            });
+        }
+    }
+    root.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{
+        view=btn.dataset.view;
+        root.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b===btn));
+        update();
+    }));
+    document.getElementById('ap-prev').addEventListener('click',()=>{const d=new Date(dateInput.value+'T12:00:00');d.setDate(d.getDate()-(view==='week'?7:1));dateInput.value=fmt(d);update();});
+    document.getElementById('ap-next').addEventListener('click',()=>{const d=new Date(dateInput.value+'T12:00:00');d.setDate(d.getDate()+(view==='week'?7:1));dateInput.value=fmt(d);update();});
+    document.getElementById('ap-today').addEventListener('click',()=>{dateInput.value=fmt(new Date());update();});
+    dateInput.addEventListener('change',update);
+    root.querySelector('select[name="status"]').addEventListener('change',update);
+    update();
+})();
+</script>
+{% endblock %}

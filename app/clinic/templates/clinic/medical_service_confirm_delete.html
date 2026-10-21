@@ -1,0 +1,27 @@
+
+{% extends "clinic/base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3>Xác nhận xóa dịch vụ</h3>
+            <p>
+                Bạn có chắc chắn muốn xóa dịch vụ
+                <strong>{{ service.name }}</strong>
+                ({{ service.code }}) không?
+            </p>
+            <p class="text-danger">
+                Thao tác này có thể không khôi phục được.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                <a href="{% url 'medical_services' %}"
+                   class="btn btn-outline-secondary">Hủy</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

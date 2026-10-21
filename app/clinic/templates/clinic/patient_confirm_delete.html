@@ -1,0 +1,17 @@
+{% extends "clinic/base.html" %}
+{% block title %}Xác nhận xóa | ClinicCare{% endblock %}
+
+{% block content %}
+<section class="panel" style="max-width:650px;margin:40px auto;text-align:center">
+    <div style="font-size:42px;margin-bottom:12px">⚠️</div>
+    <h2 style="color:#102b46">Xác nhận xóa bệnh nhân</h2>
+    <p>Bạn có chắc muốn xóa hồ sơ <strong>{{ patient.full_name }}</strong> (mã #{{ patient.id }}) không?</p>
+    <p style="color:#dc3545;font-size:13px">Hãy kiểm tra kỹ trước khi xác nhận. Hồ sơ có lịch khám liên kết có thể không xóa được.</p>
+
+    <form method="post" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px">
+        {% csrf_token %}
+        <button class="btn" type="submit" style="background:#dc3545">Xác nhận xóa</button>
+        <a class="btn" href="{% url 'patients' %}" style="background:#718096">Hủy</a>
+    </form>
+</section>
+{% endblock %}

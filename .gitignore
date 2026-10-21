@@ -1,0 +1,40 @@
+.env
+.env.*
+!.env.example
+
+__pycache__/
+*.py[cod]
+*.sqlite3
+.venv/
+venv/
+
+app/staticfiles/
+app/media/
+app/.pytest_cache/
+
+*.log
+.DS_Store
+Thumbs.db
+
+nginx/ssl/*.key
+nginx/ssl/*.crt
+# Project backups
+backups/
+
+# Backup and temporary files
+*.bak
+*.before-*
+*.backup
+*.backup_*
+
+# Additional backup files
+*.bak_*
+*.before-*
+*.backup*
+
+# Editor and project backup files
+*.v2-backup
+*.bak*
+*.backup*
+*.before-*
+*~

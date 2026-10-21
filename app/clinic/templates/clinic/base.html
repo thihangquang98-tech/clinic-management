@@ -1,0 +1,1031 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ClinicCare{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'clinic/css/cliniccare-ui.css' %}">
+
+
+    <style>
+        :root {
+            --navy: #102b46;
+            --navy-light: #183d60;
+            --blue: #2675e8;
+            --blue-light: #eaf2ff;
+            --bg: #f4f7fb;
+            --white: #fff;
+            --text: #243449;
+            --muted: #718096;
+            --border: #e5ebf3;
+            --green: #0e9f6e;
+            --orange: #d97706;
+            --red: #dc3545;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Thanh menu bên trái */
+        .sidebar {
+            width: 245px;
+            flex-shrink: 0;
+            background: var(--navy);
+            color: #d9e6f5;
+            padding: 24px 14px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px 28px;
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .brand-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--blue);
+            font-size: 21px;
+        }
+
+        .nav-label {
+            padding: 12px 12px 8px;
+            color: #91a9c3;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin: 3px 0;
+            border-radius: 8px;
+            color: #d9e6f5;
+            transition: background .2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #2463a0;
+            color: white;
+        }
+
+        .nav-icon {
+            width: 22px;
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 18px 10px 0;
+            color: #91a9c3;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        /* Khu vực nội dung */
+        .main-area {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .topbar {
+            min-height: 76px;
+            padding: 16px 30px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .page-heading {
+            margin: 0 0 5px;
+            font-size: 21px;
+            color: var(--navy);
+        }
+
+        .page-subtitle {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--blue-light);
+            color: var(--blue);
+            border-radius: 50%;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .user-name {
+            font-weight: bold;
+        }
+
+        .user-role {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .logout-form {
+            margin: 0 0 0 8px;
+        }
+
+        .logout-btn,
+        .login-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--navy);
+            font: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .logout-btn:hover,
+        .login-btn:hover {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        main {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 28px 30px;
+        }
+
+        /* Thẻ thống kê */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin: 22px 0;
+        }
+
+        .card,
+        .panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            box-shadow: 0 3px 12px rgba(20, 45, 75, .035);
+        }
+
+        .card {
+            padding: 20px;
+        }
+
+        .card h3 {
+            margin: 0 0 15px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .number {
+            color: var(--navy);
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .card-note {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .card-icon {
+            float: right;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--blue-light);
+            font-size: 21px;
+        }
+
+        .panel {
+            padding: 22px;
+            margin: 20px 0;
+        }
+
+        .panel-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .panel-heading h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--navy);
+        }
+
+        /* Bảng dữ liệu */
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f7f9fc;
+            color: #61718a;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        td {
+            font-size: 13px;
+        }
+
+        tbody tr:hover {
+            background: #f8fbff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .status-scheduled {
+            background: #eaf2ff;
+            color: #2675e8;
+        }
+
+        .status-completed {
+            background: #dff8ed;
+            color: #087f5b;
+        }
+
+        .status-cancelled {
+            background: #fee8e8;
+            color: #c53030;
+        }
+
+        .btn {
+            display: inline-block;
+            border: 0;
+            border-radius: 7px;
+            padding: 10px 14px;
+            background: var(--blue);
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn:hover {
+            background: #185fc5;
+        }
+
+        .empty-state {
+            padding: 28px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* Máy tính bảng */
+        @media (max-width: 1100px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            main {
+                padding: 22px 18px;
+            }
+
+            .topbar {
+                padding: 16px 18px;
+            }
+        }
+
+        /* Điện thoại */
+        @media (max-width: 700px) {
+            .app-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                padding: 12px;
+            }
+
+            .brand {
+                padding: 4px 8px 12px;
+            }
+
+            .sidebar nav {
+                display: flex;
+                flex-direction: row;
+                gap: 5px;
+                overflow-x: auto;
+            }
+
+            .nav-label {
+                display: none;
+            }
+
+            .nav-link {
+                flex-shrink: 0;
+                margin: 0;
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .nav-icon {
+                width: auto;
+            }
+
+            .sidebar-footer {
+                display: none;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .page-heading {
+                font-size: 18px;
+            }
+
+            .user-area {
+                gap: 7px;
+            }
+
+            .user-details {
+                display: none;
+            }
+
+            .logout-form {
+                margin-left: 0;
+            }
+
+            .logout-btn,
+            .login-btn {
+                padding: 9px 10px;
+            }
+
+            .user-role {
+                display: none;
+            }
+
+            .cards {
+                gap: 10px;
+            }
+
+            .card {
+                padding: 14px;
+            }
+
+            .number {
+                font-size: 24px;
+            }
+
+            .panel {
+                padding: 14px;
+            }
+
+            main {
+                padding: 18px 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    
+        /* CLINICCARE UI POLISH V1 */
+        :root {
+            --navy: #12396b;
+            --navy-light: #1b4c87;
+            --blue: #0878e8;
+            --blue-light: #eaf5ff;
+            --bg: #f2f7fd;
+            --text: #26384d;
+            --muted: #71839a;
+            --border: #e0eaf5;
+            --green: #138a63;
+            --orange: #c87912;
+            --red: #d94343;
+        }
+
+        body {
+            font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .app-layout { min-height: 100vh; }
+
+        .sidebar {
+            width: 258px;
+            padding: 22px 15px;
+            background: linear-gradient(180deg, #0b3972 0%, #082c59 100%);
+            box-shadow: 4px 0 24px rgba(13, 47, 89, .08);
+        }
+
+        .brand {
+            padding: 0 10px 26px;
+            font-size: 21px;
+            letter-spacing: -.4px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #39a0ff, #0878e8);
+            box-shadow: 0 5px 14px rgba(0, 0, 0, .14);
+        }
+
+        .nav-label {
+            padding: 14px 12px 8px;
+            color: #a9c5e6;
+            font-size: 10px;
+            letter-spacing: 1.1px;
+        }
+
+        .nav-link {
+            min-height: 43px;
+            margin: 3px 0;
+            padding: 11px 12px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            color: #e0ecfa;
+            font-size: 13px;
+            transition: background .18s ease, border-color .18s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, .10);
+            color: #fff;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(100deg, #1685f5, #0870dc);
+            border-color: rgba(255, 255, 255, .15);
+            color: #fff;
+            box-shadow: 0 5px 14px rgba(0, 0, 0, .12);
+        }
+
+        .nav-icon {
+            width: 23px;
+            font-size: 17px;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid rgba(255, 255, 255, .13);
+            margin-top: auto;
+            padding: 17px 10px 0;
+            color: #a9c5e6;
+        }
+
+        .main-area { min-width: 0; }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            min-height: 82px;
+            padding: 17px 32px;
+            background: rgba(255, 255, 255, .96);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 3px 12px rgba(25, 55, 90, .025);
+        }
+
+        .page-heading {
+            color: #12396b;
+            font-size: 23px;
+            font-weight: 750;
+            letter-spacing: -.45px;
+        }
+
+        .page-subtitle {
+            color: #7a8ba1;
+            font-size: 12px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            background: #e2f1ff;
+            border: 1px solid #cfe6ff;
+            color: #0878e8;
+        }
+
+        .user-name { color: #183b65; font-size: 13px; }
+        .user-role { color: #8291a5; }
+
+        .logout-btn, .login-btn {
+            border-color: #d9e6f4;
+            border-radius: 9px;
+            padding: 10px 13px;
+            font-weight: 600;
+        }
+
+        main {
+            max-width: 1700px;
+            padding: 28px 32px;
+        }
+
+        .cards {
+            gap: 18px;
+            margin: 22px 0;
+        }
+
+        .card, .panel {
+            border: 1px solid #e2ebf5;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(28, 62, 100, .045);
+        }
+
+        .card {
+            padding: 22px;
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 24px rgba(28, 62, 100, .08);
+        }
+
+        .card h3 {
+            color: #71839a;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .number {
+            color: #12396b;
+            font-size: 32px;
+            letter-spacing: -.7px;
+        }
+
+        .card-note { color: #8190a4; }
+
+        .panel {
+            padding: 24px;
+            margin: 22px 0;
+        }
+
+        .panel-heading {
+            align-items: center;
+            flex-wrap: wrap;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #edf2f8;
+        }
+
+        .panel-heading h3 {
+            color: #153c6d;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .table-wrap {
+            border: 1px solid #e8eef6;
+            border-radius: 11px;
+        }
+
+        table { min-width: 620px; }
+
+        th {
+            padding: 14px 15px;
+            background: #f5f9fe;
+            color: #6b7f98;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .35px;
+        }
+
+        td {
+            padding: 15px;
+            color: #41536a;
+            font-size: 13px;
+        }
+
+        tbody tr:hover { background: #f5faff; }
+
+        .status {
+            padding: 6px 10px;
+            font-size: 11px;
+        }
+
+        .status-scheduled {
+            background: #e7f2ff;
+            color: #0869cb;
+        }
+
+        .status-completed {
+            background: #e1f7ed;
+            color: #087f5b;
+        }
+
+        .status-cancelled {
+            background: #ffebeb;
+            color: #c53030;
+        }
+
+        .btn {
+            border-radius: 9px;
+            padding: 10px 15px;
+            background: linear-gradient(110deg, #1685f5, #0870dc);
+            box-shadow: 0 3px 8px rgba(8, 120, 232, .14);
+            font-weight: 600;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+
+        .btn:hover {
+            background: #0669cc;
+            box-shadow: 0 5px 12px rgba(8, 120, 232, .20);
+            transform: translateY(-1px);
+        }
+
+        input, select, textarea {
+            max-width: 100%;
+            border: 1px solid #d9e5f2;
+            border-radius: 9px;
+            padding: 10px 12px;
+            color: #26384d;
+            background: #fff;
+            font: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: 3px solid rgba(8, 120, 232, .12);
+            border-color: #5aa8f4;
+        }
+
+        .empty-state {
+            padding: 34px 20px;
+            color: #8291a5;
+        }
+
+        footer {
+            padding: 20px;
+            color: #8795a8;
+        }
+
+        @media (max-width: 1100px) {
+            .sidebar { width: 225px; }
+            main { padding: 24px 20px; }
+            .topbar { padding: 16px 22px; }
+        }
+
+        @media (max-width: 700px) {
+            .app-layout { flex-direction: column; }
+            .sidebar { width: 100%; padding: 12px; }
+            .brand { padding: 4px 8px 12px; }
+            .sidebar nav {
+                display: flex;
+                flex-direction: row;
+                gap: 5px;
+                overflow-x: auto;
+            }
+            .nav-label { display: none; }
+            .nav-link { flex-shrink: 0; }
+            .topbar { position: static; padding: 15px 14px; }
+            .page-heading { font-size: 18px; }
+            main { padding: 18px 12px; }
+            .panel { padding: 15px; }
+            .card { padding: 16px; }
+            .number { font-size: 26px; }
+            .user-details { display: none; }
+        }
+
+        @media (max-width: 400px) {
+            .cards { grid-template-columns: 1fr; }
+            .topbar { gap: 8px; }
+            .logout-btn { padding: 8px; }
+        }
+
+    </style>
+
+<style id="clinic-unified-theme">
+/* Giao diện thống nhất cho toàn bộ hệ thống */
+:root {
+    --clinic-primary: #245fc7;
+    --clinic-primary-dark: #17365d;
+    --clinic-page-bg: #f3f6fb;
+    --clinic-card-bg: #ffffff;
+    --clinic-text: #26364b;
+    --clinic-muted: #718096;
+    --clinic-border: #dfe7f1;
+}
+html, body {
+    font-family: Inter, "Segoe UI", Arial, sans-serif !important;
+}
+body {
+    background: var(--clinic-page-bg) !important;
+    color: var(--clinic-text);
+}
+h1, h2, h3, h4, h5, h6 {
+    color: var(--clinic-primary-dark);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+input, select, textarea, button {
+    font: inherit;
+}
+input, select, textarea {
+    border-color: var(--clinic-border);
+    border-radius: 8px;
+}
+button, input[type="submit"], .btn, a.btn {
+    border-radius: 8px;
+    transition: background-color .18s, box-shadow .18s;
+}
+table {
+    border-color: var(--clinic-border);
+}
+th {
+    background-color: #edf3fb;
+}
+.card, .panel, .table-container {
+    border-color: var(--clinic-border);
+    border-radius: 12px;
+}
+/* Khung lời chào có nền riêng, chữ tương phản rõ */
+.welcome-banner {
+    position: relative;
+    isolation: isolate;
+    color: #fff !important;
+    background: linear-gradient(120deg, #142f50 0%, #245fc7 100%) !important;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 16px !important;
+    padding: 30px !important;
+    box-shadow: 0 10px 26px rgba(23,54,93,.16) !important;
+}
+.welcome-banner h2 {
+    color: #fff !important;
+    font-size: 27px !important;
+    font-weight: 750 !important;
+}
+.welcome-banner p {
+    color: #e4eeff !important;
+}
+.welcome-banner .welcome-tag {
+    color: #fff !important;
+    background: rgba(255,255,255,.10);
+}
+@media (max-width: 600px) {
+    .welcome-banner { padding: 22px !important; }
+    .welcome-banner h2 { font-size: 22px !important; }
+}
+</style>
+
+</head>
+
+<body>
+<div class="app-layout">
+
+    <nav class="sidebar">
+        <a class="brand" href="/">
+            <span class="brand-icon">✚</span>
+            <span>ClinicCare</span>
+        </a>
+
+        <div class="nav-label">Tổng quan</div>
+
+        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+           href="{% url 'dashboard' %}">
+            <span class="nav-icon">⌂</span>
+            <span>Tổng quan</span>
+        </a>
+
+        <div class="nav-label">Quản lý phòng khám</div>
+
+        <a class="nav-link {% if '/patients/' in request.path %}active{% endif %}"
+           href="{% url 'patients' %}">
+            <span class="nav-icon">♙</span>
+            <span>Bệnh nhân</span>
+        </a>
+
+        <a class="nav-link {% if '/doctors/' in request.path %}active{% endif %}"
+           href="{% url 'doctors' %}">
+            <span class="nav-icon">⚕</span>
+            <span>Bác sĩ</span>
+        </a>
+
+        <a class="nav-link {% if '/appointments/' in request.path %}active{% endif %}"
+           href="{% url 'appointments' %}">
+            <span class="nav-icon">▦</span>
+            <span>Lịch hẹn</span>
+        </a>
+
+        <div class="nav-label">Hồ sơ và dịch vụ</div>
+
+        <a class="nav-link {% if '/medical-records/' in request.path %}active{% endif %}"
+           href="{% url 'medical_records' %}">
+            <span class="nav-icon">▧</span>
+            <span>Hồ sơ khám</span>
+        </a>
+        <a class="nav-link {% if '/prescriptions/' in request.path %}active{% endif %}"
+            href="{% url 'prescriptions' %}">
+            <span class="nav-icon">▤</span>
+            <span>Đơn thuốc</span>
+        </a>
+
+        <a class="nav-link {% if '/services/' in request.path %}active{% endif %}"
+           href="{% url 'medical_services' %}">
+            <span class="nav-icon">✚</span>
+            <span>Dịch vụ y tế</span>
+        </a>
+
+        <div class="nav-label">Quản trị và thống kê</div>
+
+        <a class="nav-link {% if '/data-overview/' in request.path %}active{% endif %}"
+           href="{% url 'data_overview' %}">
+            <span class="nav-icon">▤</span>
+            <span>Quản trị dữ liệu</span>
+        </a>
+
+        <a class="nav-link {% if '/invoices/' in request.path %}active{% endif %}"
+           href="{% url 'invoices' %}">
+            <span class="nav-icon">▣</span>
+            <span>Thanh toán - Hóa đơn</span>
+        </a>
+
+        <a class="nav-link {% if '/employees/' in request.path %}active{% endif %}"
+            href="{% url 'employee_list' %}">
+            <span class="nav-icon">♧</span>
+            <span>Quản lý nhân viên</span>
+        </a>
+
+        <a class="nav-link" href="{% url 'reports' %}">
+            <span class="nav-icon">▣</span>
+            <span>Báo cáo thống kê</span>
+        </a>
+        <div class="sidebar-footer">
+            <strong>ClinicCare</strong><br>
+            Hệ thống quản lý phòng khám<br>
+            © 2026
+        </div>
+    </nav>
+
+    <div class="main-area">
+        <header class="topbar">
+            <div>
+                <h1 class="page-heading">
+                    {% block page_heading %}Hệ thống quản lý{% endblock %}
+                </h1>
+
+                <div class="page-subtitle">
+                    {% block page_subtitle %}
+                        Quản lý hoạt động phòng khám ClinicCare
+                    {% endblock %}
+                </div>
+            </div>
+
+            <div class="user-area">
+                {% if request.user.is_authenticated %}
+                    <div class="avatar">
+                        {{ request.user.username|first|upper }}
+                    </div>
+
+                    <div class="user-details">
+                        <div class="user-name">
+                            {{ request.user.username }}
+                        </div>
+
+                        <div class="user-role">
+                            {% if request.user.is_superuser %}
+                                Quản trị viên
+                            {% else %}
+                                {% for group in request.user.groups.all %}
+                                    {{ group.name }}{% if not forloop.last %}, {% endif %}
+                                {% empty %}
+                                    Người dùng
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">
+                            Đăng xuất
+                        </button>
+                    </form>
+                {% else %}
+                    <a class="login-btn" href="{% url 'login' %}">
+                        Đăng nhập
+                    </a>
+                {% endif %}
+            </div>
+        </header>
+
+        <main>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="panel" role="status">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer>
+            ClinicCare · Hệ thống quản lý phòng khám
+        </footer>
+    </div>
+</div>
+</body>
+</html>

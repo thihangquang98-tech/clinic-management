@@ -1,0 +1,169 @@
+
+{% extends "clinic/base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+.report-page { max-width: 1500px; margin: auto; padding: 26px; color: #173b61; }
+.report-heading { display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+.report-heading h2 { font-size:28px; font-weight:800; margin:0 0 8px; }
+.report-muted { color:#7890ad; font-size:13px; }
+.report-panel, .report-card { background:#fff; border:1px solid #dfe9f5; border-radius:13px; box-shadow:0 5px 18px rgba(25,65,105,.04); }
+.report-panel { padding:16px; margin-bottom:16px; }
+.report-cards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:16px; }
+.report-card { padding:20px; min-height:105px; }
+.report-card small { display:block; color:#7890ad; margin-bottom:10px; }
+.report-card strong { font-size:25px; color:#123b64; }
+.report-filters { display:flex; flex-wrap:wrap; align-items:end; gap:10px; }
+.report-filters label { display:block; font-size:12px; margin-bottom:5px; color:#7890ad; }
+.report-filters select { min-width:120px; }
+.report-filters select, .report-filters button, .report-filters a { padding:10px 13px; border:1px solid #d7e3f1; border-radius:7px; }
+.report-btn { background:#153e69; color:white; border:0!important; text-decoration:none; }
+.report-grid { display:grid; grid-template-columns:1.6fr 1fr; gap:12px; }
+.report-panel h3 { font-size:15px; font-weight:750; margin:0 0 8px; }
+.report-legend { display:flex; gap:15px; font-size:11px; color:#7890ad; justify-content:flex-end; }
+.report-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:4px; background:#347bd0; }
+.report-dot.green { background:#18ad7c; }
+.report-status { display:flex; justify-content:space-between; gap:12px; padding:11px 0; border-bottom:1px solid #edf2f8; font-size:13px; }
+.report-status strong { color:#123b64; }
+.report-total { margin-top:14px; padding:16px; border-radius:9px; background:#edf4fd; }
+.report-total strong { display:block; text-align:right; font-size:23px; }
+.report-table { width:100%; border-collapse:collapse; font-size:12px; }
+.report-table th { background:#f3f7fc; color:#607b9b; text-align:left; }
+.report-table th, .report-table td { padding:12px 10px; border-bottom:1px solid #e7eef7; }
+.report-table td:last-child, .report-table th:last-child { text-align:right; }
+@media(max-width:900px) {
+ .report-cards { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .report-grid { grid-template-columns:1fr; }
+}
+@media(max-width:520px) {
+ .report-page { padding:12px; }
+ .report-cards { grid-template-columns:1fr 1fr; gap:8px; }
+ .report-card { padding:12px; }
+ .report-card strong { font-size:19px; }
+}
+</style>
+
+<div class="report-page">
+    <div class="report-heading">
+        <div>
+            <div class="report-muted">DentalCare / Phòng khám</div>
+            <h2>Báo cáo – Thống kê</h2>
+            <div class="report-muted">Theo dõi hoạt động và doanh thu phòng khám</div>
+        </div>
+        <span class="report-muted">Tháng {{ month }}/{{ year }}</span>
+    </div>
+
+    <form method="get" class="report-panel report-filters">
+        <div>
+            <label for="month">Tháng báo cáo</label>
+            <select id="month" name="month" class="form-select">
+                {% for value, label in month_choices %}
+                <option value="{{ value }}" {% if month == value %}selected{% endif %}>
+                    Tháng {{ value }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="year">Năm báo cáo</label>
+            <select id="year" name="year" class="form-select">
+                {% for value in year_choices %}
+                <option value="{{ value }}" {% if year == value %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="report-btn" type="submit">Xem báo cáo</button>
+        <a href="{% url 'reports' %}" class="text-decoration-none small">Về tháng hiện tại</a>
+    </form>
+
+    <div class="report-cards">
+        <div class="report-card"><small>♟ Bệnh nhân mới</small><strong>{{ total_patients }}</strong></div>
+        <div class="report-card"><small>▣ Lịch hẹn</small><strong>{{ total_appointments }}</strong></div>
+        <div class="report-card"><small>▤ Hồ sơ khám</small><strong>{{ total_records }}</strong></div>
+        <div class="report-card"><small>₫ Hóa đơn</small><strong>{{ total_invoices }}</strong></div>
+    </div>
+
+    <div class="report-grid">
+        <section class="report-panel">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h3>Hoạt động theo ngày</h3>
+                    <p class="report-muted">Số bệnh nhân mới và lịch hẹn trong tháng</p>
+                </div>
+                <div class="report-legend">
+                    <span><i class="report-dot"></i>Bệnh nhân</span>
+                    <span><i class="report-dot green"></i>Lịch hẹn</span>
+                </div>
+            </div>
+            <canvas id="activityChart" height="110"></canvas>
+            <p class="report-muted mt-3 mb-0">Dữ liệu được tổng hợp theo ngày trong tháng đã chọn.</p>
+        </section>
+
+        <section class="report-panel">
+            <h3>Tình hình hóa đơn</h3>
+            <p class="report-muted">Giá trị hóa đơn tạo trong tháng đã chọn</p>
+            <div class="report-status"><span><i class="report-dot"></i>Đã thanh toán</span><strong>{{ paid_count }}</strong></div>
+            <div class="report-status"><span><i class="report-dot" style="background:#f5a623"></i>Thanh toán một phần</span><strong>{{ partial_count }}</strong></div>
+            <div class="report-status"><span><i class="report-dot green"></i>Chưa thanh toán</span><strong>{{ unpaid_count }}</strong></div>
+            <div class="report-status"><span>Số hóa đơn</span><strong>{{ total_invoices }}</strong></div>
+            <div class="report-total">
+                <span class="report-muted">Doanh thu đã thu thành công</span>
+                <strong>{{ paid_revenue|floatformat:0 }} đ</strong>
+                <hr>
+                <span class="report-muted">Tổng giá trị chi tiết hóa đơn</span>
+                <strong>{{ invoice_totals|floatformat:0 }} đ</strong>
+            </div>
+        </section>
+    </div>
+
+    <section class="report-panel mt-3">
+        <h3>Thống kê dịch vụ</h3>
+        <p class="report-muted">Các dịch vụ có trong hóa đơn thuộc tháng đã chọn</p>
+        <div class="table-responsive">
+            <table class="report-table">
+                <thead><tr><th>STT</th><th>Tên dịch vụ</th><th>Số hóa đơn</th><th>Tổng giá trị</th></tr></thead>
+                <tbody>
+                    {% for service in service_stats %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ service.service_name }}</td>
+                        <td>{{ service.invoice_count }}</td>
+                        <td><strong>{{ service.total_value|default:0|floatformat:0 }} đ</strong></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-center">Chưa có dữ liệu dịch vụ trong tháng này.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const labels = {{ chart_labels|safe }};
+const patientData = {{ patient_counts|safe }};
+const appointmentData = {{ appointment_counts|safe }};
+
+new Chart(document.getElementById("activityChart"), {
+    type: "bar",
+    data: {
+        labels: labels,
+        datasets: [
+            { label: "Bệnh nhân", data: patientData, backgroundColor: "#347bd0", borderRadius: 3 },
+            { label: "Lịch hẹn", data: appointmentData, backgroundColor: "#18ad7c", borderRadius: 3 }
+        ]
+    },
+    options: {
+        responsive: true,
+        interaction: { mode: "index", intersect: false },
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: "#edf2f8" } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+</script>
+{% endblock %}

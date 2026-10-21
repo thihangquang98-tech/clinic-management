@@ -1,0 +1,341 @@
+
+{% extends "clinic/base.html" %}
+
+{% block content %}
+<style>
+.pres-page {
+    min-height: calc(100vh - 80px);
+    background: #f4f7fb;
+    padding: 30px;
+    color: #10213b;
+    font-family: Arial, sans-serif;
+}
+.pres-topbar {
+    background: #fff;
+    border: 1px solid #e0e5ed;
+    padding: 22px 32px;
+    margin: -30px -30px 30px;
+    font-size: 22px;
+    font-weight: 700;
+}
+.pres-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 26px;
+}
+.pres-heading h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 7px;
+}
+.pres-subtitle {
+    color: #64748b;
+    font-size: 13px;
+}
+.pres-btn {
+    display: inline-block;
+    border: 0;
+    border-radius: 10px;
+    padding: 11px 17px;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.pres-btn-primary {
+    background: #2860f5;
+    color: #fff;
+}
+.pres-btn-primary:hover {
+    background: #1749d3;
+    color: #fff;
+}
+.pres-search {
+    display: flex;
+    gap: 10px;
+    background: #fff;
+    border: 1px solid #e0e5ed;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 22px;
+}
+.pres-search input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid #cfd7e3;
+    border-radius: 10px;
+    padding: 12px 15px;
+    outline: none;
+    font-size: 14px;
+}
+.pres-search input:focus {
+    border-color: #2860f5;
+    box-shadow: 0 0 0 3px #2860f51a;
+}
+.pres-card {
+    background: #fff;
+    border: 1px solid #e0e5ed;
+    border-radius: 17px;
+    overflow: hidden;
+}
+.pres-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 21px 24px;
+    border-bottom: 1px solid #e0e5ed;
+}
+.pres-card-head h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+}
+.pres-count {
+    color: #64748b;
+    font-size: 13px;
+}
+.pres-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+.pres-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 13px;
+}
+.pres-table thead th {
+    background: #f8fafc;
+    color: #53647e;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: .2px;
+    padding: 15px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e0e5ed;
+    white-space: nowrap;
+}
+.pres-table tbody td {
+    padding: 16px;
+    border-bottom: 1px solid #edf0f5;
+    vertical-align: middle;
+}
+.pres-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+.pres-table tbody tr:hover {
+    background: #fafcff;
+}
+.pres-id {
+    color: #2860f5;
+    font-weight: 700;
+    text-decoration: none;
+}
+.pres-person {
+    font-weight: 700;
+    color: #17243a;
+    margin-bottom: 4px;
+}
+.pres-code {
+    color: #64748b;
+    font-size: 12px;
+}
+.pres-note {
+    color: #52627a;
+}
+.pres-pill {
+    display: inline-flex;
+    min-width: 34px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    padding: 0 9px;
+    background: #dceafe;
+    color: #2457e6;
+    font-weight: 700;
+}
+.pres-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.pres-action {
+    display: inline-block;
+    padding: 8px 10px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.pres-view {
+    color: #2457e6;
+    background: #edf4ff;
+}
+.pres-edit {
+    color: #a65b00;
+    background: #fff0bd;
+}
+.pres-delete {
+    color: #c62828;
+    background: #ffe2e2;
+}
+.pres-empty {
+    padding: 35px !important;
+    text-align: center;
+    color: #64748b;
+}
+.pres-footer {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 12px;
+    padding: 25px 0 5px;
+}
+@media (max-width: 768px) {
+    .pres-page { padding: 16px; }
+    .pres-topbar {
+        margin: -16px -16px 22px;
+        padding: 18px;
+        font-size: 20px;
+    }
+    .pres-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .pres-heading h2 { font-size: 23px; }
+    .pres-search { padding: 12px; }
+    .pres-card-head { padding: 17px; }
+    .pres-table thead th,
+    .pres-table tbody td { padding: 12px; }
+}
+</style>
+
+<div class="pres-page">
+    <div class="pres-topbar">Quản lý đơn thuốc</div>
+
+    <div class="pres-heading">
+        <div>
+            <h2>💊 Đơn thuốc</h2>
+            <div class="pres-subtitle">
+                Quản lý đơn thuốc và thuốc được kê cho bệnh nhân.
+            </div>
+        </div>
+        <a href="{% url 'prescription_create' %}"
+           class="pres-btn pres-btn-primary">
+            ＋ Thêm đơn thuốc
+        </a>
+    </div>
+
+    <form method="get" class="pres-search">
+        <input
+            type="text"
+            name="q"
+            value="{{ query }}"
+            placeholder="Tìm theo mã bệnh nhân, tên bệnh nhân, bác sĩ, chẩn đoán..."
+            aria-label="Tìm kiếm đơn thuốc">
+        <button type="submit" class="pres-btn pres-btn-primary">
+            🔍 Tìm kiếm
+        </button>
+    </form>
+
+    <section class="pres-card">
+        <div class="pres-card-head">
+            <h3>Danh sách đơn thuốc</h3>
+            <span class="pres-count">
+                {{ prescriptions|length }} đơn thuốc
+            </span>
+        </div>
+
+        <div class="pres-table-wrap">
+            <table class="pres-table">
+                <thead>
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Bệnh nhân</th>
+                        <th>Bác sĩ</th>
+                        <th>Ngày kê</th>
+                        <th>Chẩn đoán</th>
+                        <th>Ghi chú</th>
+                        <th>Số thuốc</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prescription in prescriptions %}
+                    <tr>
+                        <td>
+                            <a class="pres-id"
+                               href="{% url 'prescription_detail' prescription.pk %}">
+                                #{{ prescription.pk }}
+                            </a>
+                        </td>
+                        <td>
+                            <div class="pres-person">
+                                {{ prescription.medical_record.appointment.patient.full_name }}
+                            </div>
+                            <div class="pres-code">
+                                {{ prescription.medical_record.appointment.patient.patient_code|default:"" }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pres-person">
+                                {{ prescription.medical_record.appointment.doctor.full_name }}
+                            </div>
+                            <div class="pres-code">
+                                {{ prescription.medical_record.appointment.doctor.employee_code|default:"" }}
+                            </div>
+                        </td>
+                        <td>
+                            {{ prescription.prescribed_date|date:"d/m/Y" }}
+                        </td>
+                        <td>
+                            {{ prescription.medical_record.diagnosis|default:"-" }}
+                        </td>
+                        <td class="pres-note">
+                            {{ prescription.instructions|default:"-"|truncatechars:40 }}
+                        </td>
+                        <td>
+                            <span class="pres-pill">
+                                {{ prescription.items.count }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="pres-actions">
+                                <a class="pres-action pres-view"
+                                   href="{% url 'prescription_detail' prescription.pk %}">
+                                    ● Xem
+                                </a>
+                                <a class="pres-action pres-edit"
+                                   href="{% url 'prescription_detail' prescription.pk %}">
+                                    ✎ Sửa
+                                </a>
+                                <a class="pres-action pres-delete"
+                                   href="{% url 'prescription_detail' prescription.pk %}">
+                                    ▣ Xóa
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="pres-empty">
+                            Chưa có đơn thuốc nào.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="pres-footer">
+        Dental Clinic Management System
+    </div>
+</div>
+{% endblock %}

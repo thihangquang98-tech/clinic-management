@@ -1,0 +1,275 @@
+{% extends "clinic/base.html" %}
+
+{% block content %}
+<style>
+.data-overview {
+    max-width: 1400px;
+    margin: 0 auto;
+    color: #172033;
+}
+.overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 26px;
+}
+.overview-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 8px;
+}
+.overview-subtitle {
+    color: #718096;
+    margin: 0;
+}
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 26px;
+}
+.overview-card {
+    background: #fff;
+    border: 1px solid #e8edf5;
+    border-radius: 16px;
+    padding: 21px;
+    box-shadow: 0 5px 18px rgba(20, 40, 80, .04);
+}
+.overview-card .card-label {
+    font-size: 13px;
+    color: #718096;
+    margin-bottom: 13px;
+}
+.overview-card .card-value {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+.card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-size: 21px;
+}
+.blue { background: #e8f1ff; }
+.purple { background: #f0eaff; }
+.green { background: #e4f8ee; }
+.orange { background: #fff0df; }
+.pink { background: #ffe8ef; }
+.overview-panels {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+.overview-panel {
+    background: #fff;
+    border: 1px solid #e8edf5;
+    border-radius: 16px;
+    padding: 23px;
+    min-width: 0;
+}
+.overview-panel h2 {
+    font-size: 18px;
+    font-weight: 750;
+    margin: 0 0 20px;
+}
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #edf0f5;
+}
+.status-row:last-child { border-bottom: 0; }
+.status-label { color: #64748b; }
+.status-value { font-size: 18px; font-weight: 750; }
+.quick-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+.quick-link {
+    display: block;
+    padding: 15px;
+    border: 1px solid #e8edf5;
+    border-radius: 12px;
+    color: #263650;
+    text-decoration: none;
+    font-weight: 650;
+    transition: .2s;
+}
+.quick-link:hover {
+    border-color: #6795f5;
+    background: #f5f8ff;
+}
+.overview-table-wrap { overflow-x: auto; }
+.overview-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 620px;
+}
+.overview-table th, .overview-table td {
+    text-align: left;
+    padding: 14px 12px;
+    border-bottom: 1px solid #edf0f5;
+}
+.overview-table th {
+    color: #718096;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.status-badge {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.status-scheduled { background: #e8f1ff; color: #2457b2; }
+.status-completed { background: #e4f8ee; color: #137447; }
+.status-cancelled { background: #ffe8e8; color: #b42318; }
+.empty-state {
+    padding: 24px;
+    text-align: center;
+    color: #718096;
+}
+@media (max-width: 1100px) {
+    .overview-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+    .overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .overview-panels { grid-template-columns: 1fr; }
+    .overview-card { padding: 16px; }
+    .overview-card .card-value { font-size: 25px; }
+}
+@media (max-width: 420px) {
+    .overview-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .quick-links { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="data-overview">
+    <div class="overview-header">
+        <div>
+            <h1>Tổng quan dữ liệu</h1>
+            <p class="overview-subtitle">
+                Thống kê dữ liệu phòng khám được cập nhật từ hệ thống.
+            </p>
+        </div>
+        <div style="color:#718096;font-size:13px">
+            Cập nhật lúc {{ updated_at|date:"H:i d/m/Y" }}
+        </div>
+    </div>
+
+    <div class="overview-grid">
+        <div class="overview-card">
+            <div class="card-icon blue">♙</div>
+            <div class="card-label">Tổng bệnh nhân</div>
+            <div class="card-value">{{ total_patients }}</div>
+        </div>
+        <div class="overview-card">
+            <div class="card-icon purple">✚</div>
+            <div class="card-label">Tổng bác sĩ</div>
+            <div class="card-value">{{ total_doctors }}</div>
+        </div>
+        <div class="overview-card">
+            <div class="card-icon orange">▦</div>
+            <div class="card-label">Tổng lịch khám</div>
+            <div class="card-value">{{ total_appointments }}</div>
+        </div>
+        <div class="overview-card">
+            <div class="card-icon green">▤</div>
+            <div class="card-label">Hồ sơ bệnh án</div>
+            <div class="card-value">{{ total_records }}</div>
+        </div>
+        <div class="overview-card">
+            <div class="card-icon pink">＋</div>
+            <div class="card-label">Dịch vụ y tế</div>
+            <div class="card-value">{{ total_services }}</div>
+        </div>
+    </div>
+
+    <div class="overview-panels">
+        <section class="overview-panel">
+            <h2>Trạng thái lịch khám</h2>
+            <div class="status-row">
+                <span class="status-label">Đã lên lịch</span>
+                <span class="status-value">{{ scheduled_count }}</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Đã hoàn thành</span>
+                <span class="status-value">{{ completed_count }}</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Đã hủy</span>
+                <span class="status-value">{{ cancelled_count }}</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Tổng cộng</span>
+                <span class="status-value">{{ total_appointments }}</span>
+            </div>
+        </section>
+
+        <section class="overview-panel">
+            <h2>Truy cập nhanh</h2>
+            <div class="quick-links">
+                <a class="quick-link" href="{% url 'patients' %}">♙ &nbsp; Quản lý bệnh nhân</a>
+                <a class="quick-link" href="{% url 'doctors' %}">✚ &nbsp; Quản lý bác sĩ</a>
+                <a class="quick-link" href="{% url 'appointments' %}">▦ &nbsp; Quản lý lịch khám</a>
+                <a class="quick-link" href="{% url 'medical_records' %}">▤ &nbsp; Hồ sơ bệnh án</a>
+                <a class="quick-link" href="{% url 'medical_services' %}">＋ &nbsp; Dịch vụ y tế</a>
+            </div>
+        </section>
+    </div>
+
+    <section class="overview-panel">
+        <h2>Lịch khám mới được tạo gần đây</h2>
+        <div class="overview-table-wrap">
+            <table class="overview-table">
+                <thead>
+                    <tr>
+                        <th>Bệnh nhân</th>
+                        <th>Bác sĩ</th>
+                        <th>Thời gian khám</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for appointment in recent_appointments %}
+                    <tr>
+                        <td>{{ appointment.patient.full_name }}</td>
+                        <td>{{ appointment.doctor.full_name }}</td>
+                        <td>{{ appointment.appointment_time|date:"H:i d/m/Y" }}</td>
+                        <td>
+                            {% if appointment.status == "scheduled" %}
+                                <span class="status-badge status-scheduled">Đã lên lịch</span>
+                            {% elif appointment.status == "completed" %}
+                                <span class="status-badge status-completed">Hoàn thành</span>
+                            {% elif appointment.status == "cancelled" %}
+                                <span class="status-badge status-cancelled">Đã hủy</span>
+                            {% else %}
+                                {{ appointment.get_status_display }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            Chưa có lịch khám nào trong hệ thống.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

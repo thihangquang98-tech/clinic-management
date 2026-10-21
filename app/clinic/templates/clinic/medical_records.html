@@ -1,0 +1,128 @@
+
+{% extends "clinic/base.html" %}
+
+{% block title %}Hồ sơ khám bệnh | ClinicCare{% endblock %}
+{% block content %}
+<style>
+.mr-page{max-width:1600px;margin:0 auto;color:#173653}
+.mr-heading{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:24px}
+.mr-heading h1{font-size:30px;font-weight:800;color:#123b60;margin:0 0 7px}
+.mr-heading p{font-size:13px;color:#7186a1;margin:0}
+.mr-badge{padding:10px 15px;background:#eaf3ff;color:#2165b8;border-radius:24px;font-size:12px;font-weight:750;white-space:nowrap}
+.mr-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:22px}
+.mr-stat{display:flex;align-items:center;gap:15px;padding:20px;background:#fff;border:1px solid #e1eaf4;border-radius:16px;box-shadow:0 6px 20px #23456708;min-height:90px}
+.mr-icon{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;border-radius:13px;font-size:23px}
+.mr-label{font-size:12px;color:#7186a1;margin-bottom:6px}
+.mr-value{font-size:23px;font-weight:800;color:#123b60}
+.mr-search{display:flex;gap:10px;padding:18px;margin-bottom:18px;background:#fff;border:1px solid #e1eaf4;border-radius:15px;box-shadow:0 6px 20px #23456708}
+.mr-search input{height:43px;flex:1;min-width:0;box-sizing:border-box;padding:0 15px;border:1px solid #d7e3f0;border-radius:9px;font-size:13px;color:#173653}
+.mr-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:43px;padding:0 17px;border:0;border-radius:9px;background:#1674d1;color:#fff!important;text-decoration:none;font-size:12px;font-weight:750;white-space:nowrap;cursor:pointer}
+.mr-btn-add{background:#198754}
+.mr-list-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 12px;color:#7186a1;font-size:12px}
+.mr-table-wrap{background:#fff;border:1px solid #e1eaf4;border-radius:15px;overflow:hidden;box-shadow:0 6px 20px #23456708}
+.mr-table{width:100%;border-collapse:collapse;min-width:850px}
+.mr-table thead{background:#153e65;color:#fff}
+.mr-table th{padding:15px 14px;text-align:left;font-size:11px;font-weight:800;white-space:nowrap}
+.mr-table td{padding:15px 14px;border-bottom:1px solid #eaf0f6;color:#334d67;font-size:12px;vertical-align:middle}
+.mr-table tbody tr:last-child td{border-bottom:0}
+.mr-table tbody tr:hover{background:#f8fbff}
+.mr-id{display:inline-grid;place-items:center;min-width:34px;height:34px;padding:0 5px;box-sizing:border-box;border-radius:9px;background:#edf5ff;color:#176ac3;font-weight:800}
+.mr-person-code{display:block;margin-bottom:4px;color:#1674d1;font-size:10px;font-weight:800}
+.mr-person-name{font-weight:750;color:#173653;font-size:12px}
+.mr-muted{color:#8495aa}
+.mr-actions{display:flex;gap:7px;white-space:nowrap}
+.mr-actions a{display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border-radius:9px;text-decoration:none;font-size:11px;font-weight:750}
+.mr-edit{background:#fff3d6;color:#a95a00!important}
+.mr-delete{background:#ffedf0;color:#ce3347!important}
+.mr-empty{text-align:center!important;padding:35px!important;color:#8495aa!important}
+@media(max-width:900px){.mr-stats{grid-template-columns:1fr}.mr-stat{padding:16px}.mr-table-wrap{overflow-x:auto}}
+@media(max-width:600px){.mr-heading{align-items:flex-start;flex-direction:column}.mr-heading h1{font-size:25px}.mr-search{flex-wrap:wrap;padding:13px}.mr-search input{flex-basis:100%}.mr-search .mr-btn{flex:1;padding:0 9px}.mr-list-head{align-items:flex-start}}
+</style>
+
+<div class="mr-page">
+    <header class="mr-heading">
+        <div>
+            <h1>Hồ sơ khám bệnh</h1>
+            <p>Quản lý thông tin chẩn đoán, điều trị và lịch sử khám của bệnh nhân.</p>
+        </div>
+        <span class="mr-badge">🦷 Quản lý hồ sơ nha khoa</span>
+    </header>
+
+    <section class="mr-stats">
+        <article class="mr-stat">
+            <div class="mr-icon" style="background:#eaf3ff">📋</div>
+            <div><div class="mr-label">Tổng số hồ sơ</div><div class="mr-value">{{ medical_records|length }}</div></div>
+        </article>
+        <article class="mr-stat">
+            <div class="mr-icon" style="background:#e7f7ef">🩺</div>
+            <div><div class="mr-label">Hồ sơ đang hiển thị</div><div class="mr-value">{{ medical_records|length }}</div></div>
+        </article>
+        <article class="mr-stat">
+            <div class="mr-icon" style="background:#fff4e4">🔎</div>
+            <div><div class="mr-label">Trạng thái tìm kiếm</div><div class="mr-value" style="font-size:17px">{% if query %}Đang lọc{% else %}Tất cả{% endif %}</div></div>
+        </article>
+    </section>
+
+    <form method="get" class="mr-search">
+        <input type="search" name="q" value="{{ query }}" placeholder="🔎 Tìm bệnh nhân, bác sĩ, mã hoặc chẩn đoán...">
+        <button type="submit" class="mr-btn">🔎 Tìm kiếm</button>
+        {% if query %}
+            <a href="{% url 'medical_records' %}" class="mr-btn" style="background:#718096">Đặt lại</a>
+        {% endif %}
+        <a href="{% url 'medical_record_create' %}" class="mr-btn mr-btn-add">＋ Thêm hồ sơ khám</a>
+    </form>
+
+    <div class="mr-list-head">
+        <span>Danh sách tất cả hồ sơ khám bệnh</span>
+        <span>{{ medical_records|length }} hồ sơ</span>
+    </div>
+
+    <div class="mr-table-wrap">
+        <table class="mr-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>BỆNH NHÂN</th>
+                    <th>BÁC SĨ</th>
+                    <th>LỊCH HẸN</th>
+                    <th>CHẨN ĐOÁN</th>
+                    <th>ĐIỀU TRỊ</th>
+                    <th>GHI CHÚ</th>
+                    <th>THAO TÁC</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in medical_records %}
+                <tr>
+                    <td><span class="mr-id">{{ record.id }}</span></td>
+                    <td>
+                        <span class="mr-person-code">{{ record.appointment.patient.patient_code|default:record.appointment.patient.id }}</span>
+                        <span class="mr-person-name">{{ record.appointment.patient.full_name }}</span>
+                    </td>
+                    <td>
+                        <span class="mr-person-code">{{ record.appointment.doctor.doctor_code|default:record.appointment.doctor.id }}</span>
+                        <span class="mr-person-name">{{ record.appointment.doctor.full_name }}</span>
+                    </td>
+                    <td>
+                        <strong>{{ record.appointment.appointment_time|date:"d/m/Y" }}</strong><br>
+                        <span class="mr-muted">◷ {{ record.appointment.appointment_time|date:"H:i" }}</span>
+                    </td>
+                    <td>{{ record.diagnosis|default:"Chưa cập nhật"|truncatechars:70 }}</td>
+                    <td>{{ record.treatment|default:"—"|truncatechars:60 }}</td>
+                    <td class="mr-muted">{{ record.notes|default:"Không có ghi chú"|truncatechars:65 }}</td>
+                    <td>
+                        <div class="mr-actions">
+                            <a class="mr-edit" href="{% url 'medical_record_update' record.id %}">✏ Sửa</a>
+                            {% if 'medical_record_delete' in request.resolver_match.namespaces %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="mr-empty">Chưa có hồ sơ khám bệnh phù hợp.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

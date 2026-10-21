@@ -1,0 +1,389 @@
+
+{% extends "clinic/base.html" %}
+{% block title %}Trang chủ | ClinicCare{% endblock %}
+{% block page_heading %}Tổng quan phòng khám{% endblock %}
+{% block page_subtitle %}Theo dõi hoạt động và danh mục quản lý phòng khám{% endblock %}
+
+{% block content %}
+<style>
+.dashboard-page {
+    max-width: 1500px;
+    margin: 0 auto;
+    color: #17365d;
+}
+.dashboard-page * { box-sizing: border-box; }
+
+.welcome-banner {
+    position: relative;
+    overflow: hidden;
+    padding: 27px 30px;
+    border-radius: 14px;
+    color: #fff;
+    background: linear-gradient(115deg, #142f50, #286bc0);
+    box-shadow: 0 8px 22px rgba(30, 78, 130, .12);
+    margin-bottom: 20px;
+}
+.welcome-banner:after {
+    content: "";
+    position: absolute;
+    right: 25px;
+    top: -95px;
+    width: 250px;
+    height: 250px;
+    border: 18px solid rgba(255,255,255,.06);
+    border-radius: 50%;
+    box-shadow: 0 0 0 18px rgba(255,255,255,.04),
+                0 0 0 40px rgba(255,255,255,.025);
+}
+.welcome-banner h2 {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 9px;
+    font-size: 25px;
+    font-weight: 750;
+}
+.welcome-banner p {
+    position: relative;
+    z-index: 1;
+    max-width: 650px;
+    margin: 0;
+    color: #dceaff;
+    font-size: 13px;
+}
+.welcome-banner .welcome-tag {
+    position: absolute;
+    z-index: 2;
+    right: 22px;
+    top: 25px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 7px;
+    font-size: 11px;
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.metric-card {
+    min-width: 0;
+    padding: 17px;
+    border: 1px solid #e0e8f3;
+    border-radius: 11px;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(25,55,90,.035);
+}
+.metric-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.metric-label { color: #71839d; font-size: 12px; }
+.metric-number {
+    margin-top: 10px;
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #17365d;
+}
+.metric-note { margin-top: 7px; color: #8a9ab0; font-size: 10px; }
+.metric-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: #eaf2ff;
+    color: #286bc0;
+    font-size: 17px;
+}
+.metric-green { background: #e4f8ef; color: #15966a; }
+.metric-orange { background: #fff1dc; color: #c47b12; }
+.metric-purple { background: #f0e9ff; color: #7950d5; }
+.metric-red { background: #ffebef; color: #dc4763; }
+
+.dashboard-panel {
+    background: #fff;
+    border: 1px solid #e0e8f3;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(25,55,90,.025);
+}
+.dashboard-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 19px;
+    border-bottom: 1px solid #e7edf5;
+}
+.dashboard-panel-header h3 {
+    margin: 0;
+    color: #17365d;
+    font-size: 15px;
+    font-weight: 750;
+}
+.dashboard-panel-header p {
+    margin: 5px 0 0;
+    color: #8493a9;
+    font-size: 11px;
+}
+.dashboard-panel-header a {
+    color: #2469bc;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 650;
+}
+.dashboard-table-wrap { overflow-x: auto; }
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.dashboard-table th {
+    padding: 13px 17px;
+    background: #f7f9fd;
+    color: #687d9b;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 10px;
+    font-weight: 700;
+}
+.dashboard-table td {
+    padding: 13px 17px;
+    border-top: 1px solid #edf1f7;
+    color: #405775;
+}
+.dashboard-table tbody tr:hover { background: #f8fbff; }
+.patient-code { color: #2368bb; font-weight: 750; }
+.status-pill {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: #e6f7ee;
+    color: #17865c;
+    font-size: 10px;
+    white-space: nowrap;
+}
+.status-other { background: #fff1dc; color: #a86b12; }
+.empty-row { text-align: center; padding: 28px !important; color: #8797ad !important; }
+
+.quick-title {
+    margin: 0 0 13px;
+    color: #17365d;
+    font-size: 16px;
+    font-weight: 800;
+}
+.quick-links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+.quick-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+    padding: 17px;
+    border: 1px solid #e0e8f3;
+    border-radius: 11px;
+    background: #fff;
+    text-decoration: none;
+    transition: border-color .18s, transform .18s, box-shadow .18s;
+}
+.quick-link:hover {
+    border-color: #a9c9f0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(30,78,130,.07);
+}
+.quick-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 35px;
+    height: 35px;
+    border-radius: 9px;
+    color: #276ac0;
+    background: #edf4ff;
+    font-size: 17px;
+}
+.quick-link strong {
+    display: block;
+    margin: 1px 0 6px;
+    color: #17365d;
+    font-size: 12px;
+}
+.quick-link span {
+    display: block;
+    color: #8191a8;
+    font-size: 10px;
+    line-height: 1.6;
+}
+@media (max-width: 1100px) {
+    .dashboard-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+    .dashboard-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .quick-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .welcome-banner .welcome-tag { display: none; }
+}
+@media (max-width: 480px) {
+    .dashboard-cards, .quick-links { grid-template-columns: 1fr; }
+    .welcome-banner { padding: 22px; }
+    .welcome-banner h2 { font-size: 21px; }
+}
+</style>
+
+<div class="dashboard-page">
+    <section class="welcome-banner">
+        <span class="welcome-tag">✚ DentalCare Management</span>
+        <h2>Xin chào, Quản lý phòng khám!</h2>
+        <p>Chào mừng bạn trở lại. Chúc bạn một ngày làm việc hiệu quả và chăm sóc bệnh nhân tốt nhất.</p>
+    </section>
+
+    <section class="dashboard-cards">
+        <article class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Tổng bệnh nhân</span>
+                <span class="metric-icon">♙</span>
+            </div>
+            <div class="metric-number">{{ patient_count|default:0 }}</div>
+            <div class="metric-note">Hồ sơ bệnh nhân trong hệ thống</div>
+        </article>
+
+        <article class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Đội ngũ bác sĩ</span>
+                <span class="metric-icon metric-green">⚕</span>
+            </div>
+            <div class="metric-number">{{ doctor_count|default:0 }}</div>
+            <div class="metric-note">Bác sĩ đang được quản lý</div>
+        </article>
+
+        <article class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Lịch hẹn</span>
+                <span class="metric-icon metric-orange">▦</span>
+            </div>
+            <div class="metric-number">{{ appointment_count|default:0 }}</div>
+            <div class="metric-note">Tổng lịch hẹn đã tạo</div>
+        </article>
+
+        <article class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Dịch vụ nha khoa</span>
+                <span class="metric-icon metric-purple">✚</span>
+            </div>
+            <div class="metric-number">{{ total_services|default:0 }}</div>
+            <div class="metric-note">Dịch vụ đang hoạt động</div>
+        </article>
+
+        <article class="metric-card">
+            <div class="metric-top">
+                <span class="metric-label">Hóa đơn</span>
+                <span class="metric-icon metric-red">₫</span>
+            </div>
+            <div class="metric-number">{{ invoice_count|default:0 }}</div>
+            <div class="metric-note">Tổng hóa đơn đã lập</div>
+        </article>
+    </section>
+
+    <section class="dashboard-panel">
+        <header class="dashboard-panel-header">
+            <div>
+                <h3>▣ &nbsp; Lịch hẹn gần đây</h3>
+                <p>Theo dõi thông tin các lịch khám sắp diễn ra</p>
+            </div>
+            <a href="{% url 'appointments' %}">Xem lịch hẹn →</a>
+        </header>
+
+        <div class="dashboard-table-wrap">
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>MÃ LỊCH HẸN</th>
+                        <th>BỆNH NHÂN</th>
+                        <th>BÁC SĨ</th>
+                        <th>THỜI GIAN KHÁM</th>
+                        <th>LÝ DO KHÁM</th>
+                        <th>TRẠNG THÁI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in upcoming_appointments %}
+                    <tr>
+                        <td class="patient-code">LH{{ item.pk|stringformat:"03d" }}</td>
+                        <td>{{ item.patient.full_name }}</td>
+                        <td>{{ item.doctor.full_name }}</td>
+                        <td>{{ item.appointment_time|date:"d/m/Y H:i" }}</td>
+                        <td>{{ item.reason|default:"Khám tổng quát" }}</td>
+                        <td>
+                            {% if item.status == "scheduled" %}
+                                <span class="status-pill">Đã đặt lịch</span>
+                            {% elif item.status == "completed" %}
+                                <span class="status-pill">Hoàn thành</span>
+                            {% else %}
+                                <span class="status-pill status-other">{{ item.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-row">Chưa có lịch hẹn nào. Hãy tạo lịch khám mới.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section>
+        <h3 class="quick-title">› &nbsp; Truy cập nhanh</h3>
+        <div class="quick-links">
+            <a class="quick-link" href="{% url 'patients' %}">
+                <span class="quick-icon">♙</span>
+                <span><strong>Quản lý bệnh nhân</strong><span>Tra cứu, thêm mới và cập nhật hồ sơ bệnh nhân.</span></span>
+            </a>
+            <a class="quick-link" href="{% url 'appointments' %}">
+                <span class="quick-icon">▣</span>
+                <span><strong>Quản lý lịch hẹn</strong><span>Theo dõi và quản lý lịch khám của bệnh nhân.</span></span>
+            </a>
+            <a class="quick-link" href="{% url 'doctors' %}">
+                <span class="quick-icon">⚕</span>
+                <span><strong>Quản lý bác sĩ</strong><span>Xem danh sách và thông tin đội ngũ bác sĩ.</span></span>
+            </a>
+            <a class="quick-link" href="{% url 'employee_list' %}">
+                <span class="quick-icon">♟</span>
+                <span><strong>Quản lý nhân viên</strong><span>Quản lý tài khoản và vai trò nhân sự.</span></span>
+            </a>
+            <a class="quick-link" href="{% url 'medical_services' %}">
+                <span class="quick-icon">▤</span>
+                <span><strong>Dịch vụ nha khoa</strong><span>Theo dõi danh sách dịch vụ và đơn giá.</span></span>
+            </a>
+            <a class="quick-link" href="{% url 'medical_records' %}">
+                <span class="quick-icon">▣</span>
+                <span><strong>Hồ sơ khám bệnh</strong><span>Tra cứu hồ sơ và thông tin điều trị.</span></span>
+            </a>
+            <a class="quick-link" href="{% url 'prescriptions' %}">
+                <span class="quick-icon">＋</span>
+                <span><strong>Quản lý đơn thuốc</strong><span>Theo dõi đơn thuốc đã kê cho bệnh nhân.</span></span>
+            </a>
+            <a class="quick-link" href="{% url 'invoices' %}">
+                <span class="quick-icon">₫</span>
+                <span><strong>Thanh toán - Hóa đơn</strong><span>Quản lý hóa đơn và tình trạng thanh toán.</span></span>
+            </a>
+            <a class="quick-link" href="{% url 'reports' %}">
+                <span class="quick-icon">▤</span>
+                <span><strong>Báo cáo - Thống kê</strong><span>Xem báo cáo hoạt động và tài chính phòng khám.</span></span>
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock %}

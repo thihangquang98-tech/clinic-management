@@ -1,0 +1,14 @@
+{% extends "clinic/base.html" %}
+{% block title %}{{ page_title }} | ClinicCare{% endblock %}
+{% block content %}
+<section class="panel" style="max-width:650px;margin:40px auto;text-align:center">
+    <h2 style="color:#102b46">{{ page_title }}</h2>
+    <p>Bạn có chắc muốn xóa <strong>{{ object }}</strong> không?</p>
+    <p style="color:#b45309">Thao tác này không thể hoàn tác.</p>
+    <form method="post" style="display:flex;justify-content:center;gap:10px;margin-top:22px">
+        {% csrf_token %}
+        <button class="btn" type="submit" style="background:#dc3545">Xác nhận xóa</button>
+        <a class="btn" href="{% url cancel_url %}" style="background:#718096">Hủy</a>
+    </form>
+</section>
+{% endblock %}

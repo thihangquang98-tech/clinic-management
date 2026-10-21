@@ -1,0 +1,60 @@
+{% extends "clinic/base.html" %}
+{% block title %}{{ page_title }} | ClinicCare{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:22px">
+    <a href="{% url 'patients' %}" style="color:#2675e8">← Quay lại danh sách</a>
+    <h2 style="color:#102b46;margin:16px 0 6px">{{ page_title }}</h2>
+    <p style="color:#718096;margin:0">Nhập thông tin vào biểu mẫu bên dưới.</p>
+</div>
+
+<section class="panel" style="max-width:850px">
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div style="color:#dc3545;margin-bottom:14px">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px">
+            {% for field in form %}
+            <div>
+                <label for="{{ field.id_for_label }}"
+                       style="display:block;font-weight:600;margin-bottom:8px">
+                    {{ field.label }}
+                    {% if field.field.required %}<span style="color:#dc3545">*</span>{% endif %}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                    <div style="color:#dc3545;font-size:12px;margin-top:5px">{{ field.errors }}</div>
+                {% endif %}
+                {% if field.help_text %}
+                    <div style="color:#718096;font-size:12px;margin-top:5px">{{ field.help_text }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:26px;flex-wrap:wrap">
+            <button class="btn" type="submit">{{ submit_label }}</button>
+            <a class="btn" href="{% url 'patients' %}" style="background:#718096">Hủy</a>
+        </div>
+    </form>
+</section>
+
+<style>
+.form-control {
+    width:100%;
+    padding:11px 12px;
+    border:1px solid #dce3ed;
+    border-radius:8px;
+    background:#fff;
+    color:#243449;
+    font:inherit;
+}
+.form-control:focus {
+    outline:2px solid #c8ddff;
+    border-color:#2675e8;
+}
+</style>
+{% endblock %}

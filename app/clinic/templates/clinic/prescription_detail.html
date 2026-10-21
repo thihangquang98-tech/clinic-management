@@ -1,0 +1,115 @@
+
+{% extends "clinic/base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Đơn thuốc #{{ prescription.pk }}</h2>
+        <button class="btn btn-outline-secondary" onclick="window.print()">
+            In đơn thuốc
+        </button>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <p>
+                <strong>Bệnh nhân:</strong>
+                {{ prescription.medical_record.appointment.patient.full_name }}
+            </p>
+            <p>
+                <strong>Bác sĩ:</strong>
+                {{ prescription.medical_record.appointment.doctor.full_name }}
+            </p>
+            <p>
+                <strong>Ngày kê:</strong>
+                {{ prescription.prescribed_date|date:"d/m/Y" }}
+            </p>
+            <p>
+                <strong>Lời dặn:</strong>
+                {{ prescription.instructions|default:"Không có" }}
+            </p>
+        </div>
+    </div>
+
+    <h4>Danh sách thuốc</h4>
+    <div class="table-responsive mb-4">
+        <table class="table table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>Tên thuốc</th>
+                    <th>Hàm lượng</th>
+                    <th>Liều mỗi lần</th>
+                    <th>Số lần dùng</th>
+                    <th>Số ngày</th>
+                    <th>Số lượng</th>
+                    <th>Hướng dẫn</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in prescription.items.all %}
+                <tr>
+                    <td>{{ item.medicine_name }}</td>
+                    <td>{{ item.strength|default:"—" }}</td>
+                    <td>{{ item.dosage }}</td>
+                    <td>{{ item.frequency }}</td>
+                    <td>{{ item.duration_days }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.usage_instructions|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">
+                        Chưa có thuốc trong đơn.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4 class="mb-3">Thêm thuốc vào đơn</h4>
+
+            <form method="post"
+                  action="{% url 'prescription_add_item' prescription.pk %}">
+                {% csrf_token %}
+
+                {% for field in item_form %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary">
+                    Thêm thuốc
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <a href="{% url 'prescriptions' %}" class="btn btn-secondary">
+        Quay lại danh sách
+    </a>
+</div>
+
+<style>
+@media print {
+    body * { visibility: hidden; }
+    .container-fluid, .container-fluid * { visibility: visible; }
+    .container-fluid {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+    form, button, .btn { display: none !important; }
+}
+</style>
+{% endblock %}

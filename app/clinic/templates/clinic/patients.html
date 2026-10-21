@@ -1,0 +1,958 @@
+{% extends "clinic/base.html" %}
+{% load static %}
+
+{% block title %}Quản lý bệnh nhân | ClinicCare{% endblock %}
+
+{% block content %}
+<div class="patients-page">
+
+    <!-- Tiêu đề trang -->
+    <div class="patients-page-header">
+        <div>
+            <div class="page-eyebrow">QUẢN LÝ PHÒNG KHÁM</div>
+            <h1 class="patients-title">Quản lý bệnh nhân</h1>
+            <p class="patients-subtitle">
+                Quản lý thông tin liên hệ và hồ sơ bệnh nhân tập trung,
+                nhanh chóng và thuận tiện.
+            </p>
+        </div>
+
+        <a class="patients-primary-btn" href="{% url 'patient_create' %}">
+            <span class="btn-plus">+</span>
+            <span>Thêm bệnh nhân</span>
+        </a>
+    </div>
+
+    <!-- Thông báo Django -->
+    {% if messages %}
+        <div class="patients-messages">
+            {% for message in messages %}
+                <div class="patients-alert patients-alert-{{ message.tags|default:'success' }}">
+                    <span class="alert-icon">✓</span>
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Thống kê lấy từ dữ liệu thực -->
+    <div class="patients-stats">
+
+        <div class="patient-stat-card">
+            <div class="patient-stat-top">
+                <div class="patient-stat-icon stat-icon-blue">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="10" cy="7" r="4"/>
+                        <path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <span class="stat-label">Tổng kết quả</span>
+            </div>
+            <div class="patient-stat-number">{{ patients|length }}</div>
+            <div class="patient-stat-caption">Theo danh sách đang hiển thị</div>
+        </div>
+
+        <div class="patient-stat-card">
+            <div class="patient-stat-top">
+                <div class="patient-stat-icon stat-icon-green">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2
+                        19.79 19.79 0 0 1-8.63-3.07
+                        19.5 19.5 0 0 1-6-6
+                        19.79 19.79 0 0 1-3.07-8.67
+                        A2 2 0 0 1 4.11 2h3
+                        a2 2 0 0 1 2 1.72
+                        c.12.96.36 1.9.7 2.8
+                        a2 2 0 0 1-.45 2.11L8.09 9.91
+                        a16 16 0 0 0 6 6l1.27-1.27
+                        a2 2 0 0 1 2.11-.45
+                        c.9.34 1.84.58 2.8.7
+                        A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                </div>
+                <span class="stat-label">Có số điện thoại</span>
+            </div>
+            <div class="patient-stat-number">
+                {{ patients|length }}
+            </div>
+            <div class="patient-stat-caption">Có thông tin liên hệ</div>
+        </div>
+
+        <div class="patient-stat-card">
+            <div class="patient-stat-top">
+                <div class="patient-stat-icon stat-icon-purple">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="14" rx="2"/>
+                        <path d="m3 7 9 6 9-6"/>
+                    </svg>
+                </div>
+                <span class="stat-label">Có email</span>
+            </div>
+            <div class="patient-stat-number">
+                {{ patients|length }}
+            </div>
+            <div class="patient-stat-caption">Có thông tin email được lưu</div>
+        </div>
+
+    </div>
+
+    <!-- Khu vực tìm kiếm -->
+    <section class="patients-card patients-search-card">
+        <div class="patients-section-heading">
+            <div class="section-heading-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"/>
+                    <path d="m20 20-4-4"/>
+                </svg>
+            </div>
+            <div>
+                <h2>Tìm kiếm bệnh nhân</h2>
+                <p>
+                    Tìm theo mã bệnh nhân, họ tên, số điện thoại hoặc email.
+                </p>
+            </div>
+        </div>
+
+        <form method="get" action="{% url 'patients' %}" class="patients-search-form">
+            <div class="patients-search-input-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"/>
+                    <path d="m20 20-4-4"/>
+                </svg>
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ query|default:'' }}"
+                    placeholder="Nhập mã bệnh nhân, họ tên, số điện thoại hoặc email..."
+                    aria-label="Tìm kiếm bệnh nhân"
+                >
+            </div>
+
+            <button class="patients-primary-btn patients-search-btn" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"/>
+                    <path d="m20 20-4-4"/>
+                </svg>
+                Tìm kiếm
+            </button>
+
+            {% if query %}
+                <a class="patients-reset-btn" href="{% url 'patients' %}">
+                    Đặt lại
+                </a>
+            {% endif %}
+        </form>
+    </section>
+
+    <!-- Danh sách bệnh nhân -->
+    <section class="patients-card patients-list-card">
+        <div class="patients-list-header">
+            <div class="patients-section-heading">
+                <div class="section-heading-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 6h13M8 12h13M8 18h13"/>
+                        <path d="M3 6h.01M3 12h.01M3 18h.01"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2>Danh sách bệnh nhân</h2>
+                    <p>Thông tin bệnh nhân và các thao tác quản lý</p>
+                </div>
+            </div>
+
+            <span class="patients-result-count">
+                {{ patients|length }} kết quả
+            </span>
+        </div>
+
+        <div class="patients-table-wrap">
+            <table class="patients-table">
+                <thead>
+                    <tr>
+                        <th>Mã bệnh nhân</th>
+                        <th>Họ và tên</th>
+                        <th>Ngày sinh</th>
+                        <th>Giới tính</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th class="patients-actions-heading">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for patient in patients %}
+                    <tr>
+                        <td>
+                            <span class="patient-code">
+                                BN{{ patient.id|stringformat:"03d" }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="patient-name-cell">
+                                <div class="patient-avatar">
+                                    {{ patient.full_name|default:"BN"|slice:":1"|upper }}
+                                </div>
+                                <div class="patient-name-text">
+                                    <strong>{{ patient.full_name }}</strong>
+                                    <span>Mã hồ sơ: BN{{ patient.id|stringformat:"03d" }}</span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ patient.date_of_birth|date:"d/m/Y"|default:"—" }}
+                        </td>
+
+                        <td>
+                            {{ patient.get_gender_display|default:patient.gender|default:"—" }}
+                        </td>
+
+                        <td>
+                            {% if patient.phone %}
+                                <span class="patient-contact">{{ patient.phone }}</span>
+                            {% else %}
+                                <span class="patient-muted">Chưa cập nhật</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if patient.email %}
+                                <span class="patient-email">{{ patient.email }}</span>
+                            {% else %}
+                                <span class="patient-muted">Chưa cập nhật</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="patient-action-group">
+                                <a
+                                    class="patient-action-btn patient-edit-btn"
+                                    href="{% url 'patient_update' patient.id %}"
+                                    title="Sửa thông tin bệnh nhân"
+                                >
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 20h9"/>
+                                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>
+                                    </svg>
+                                    Sửa
+                                </a>
+
+                                <form method="post"
+      action="{% url 'patient_delete' patient.id %}"
+      style="display:inline;"
+      onsubmit="return confirm('Bạn có chắc chắn muốn xóa bệnh nhân này không?');">
+    {% csrf_token %}
+    <button type="submit"
+            title="Xóa bệnh nhân"
+            style="color:#dc3545; background:none; border:none; cursor:pointer;">
+        Xóa
+    </button>
+</form>
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="patients-empty-state">
+                                <div class="empty-state-icon">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle cx="11" cy="11" r="7"/>
+                                        <path d="m20 20-4-4"/>
+                                    </svg>
+                                </div>
+                                <h3>
+                                    {% if query %}
+                                        Không tìm thấy bệnh nhân
+                                    {% else %}
+                                        Chưa có dữ liệu bệnh nhân
+                                    {% endif %}
+                                </h3>
+                                <p>
+                                    {% if query %}
+                                        Thử từ khóa khác hoặc đặt lại bộ lọc tìm kiếm.
+                                    {% else %}
+                                        Bạn có thể thêm bệnh nhân để bắt đầu quản lý hồ sơ.
+                                    {% endif %}
+                                </p>
+                                {% if not query %}
+                                    <a href="{% url 'patient_create' %}" class="patients-primary-btn">
+                                        + Thêm bệnh nhân
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="patients-table-footer">
+            <span>Hiển thị {{ patients|length }} bệnh nhân trong kết quả hiện tại</span>
+        </div>
+    </section>
+
+</div>
+
+<style>
+/* =========================================
+   CLINICCARE - PATIENT MANAGEMENT
+   ========================================= */
+.patients-page {
+    --patient-blue: #0878e8;
+    --patient-navy: #12396b;
+    --patient-text: #19365c;
+    --patient-muted: #7186a5;
+    --patient-border: #dce7f3;
+    --patient-bg: #f4f8fd;
+    color: var(--patient-text);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.patients-page *,
+.patients-page *::before,
+.patients-page *::after {
+    box-sizing: border-box;
+}
+
+.patients-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.page-eyebrow {
+    color: var(--patient-blue);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+
+.patients-title {
+    margin: 0 0 8px;
+    color: var(--patient-navy);
+    font-size: clamp(24px, 3vw, 30px);
+    line-height: 1.25;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+
+.patients-subtitle {
+    margin: 0;
+    color: var(--patient-muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.patients-primary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 11px 17px;
+    border: 1px solid var(--patient-blue);
+    border-radius: 10px;
+    background: linear-gradient(135deg, #1689f9, #0870dc);
+    color: #fff !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none !important;
+    white-space: nowrap;
+    box-shadow: 0 5px 13px rgba(8, 120, 232, .17);
+    transition: transform .2s, box-shadow .2s, background .2s;
+    cursor: pointer;
+}
+
+.patients-primary-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(8, 120, 232, .24);
+    color: #fff !important;
+}
+
+.btn-plus {
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 16px;
+}
+
+.patients-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.patient-stat-card {
+    min-width: 0;
+    padding: 21px;
+    background: #fff;
+    border: 1px solid var(--patient-border);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(31, 71, 117, .035);
+    transition: transform .2s, box-shadow .2s;
+}
+
+.patient-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 9px 24px rgba(31, 71, 117, .08);
+}
+
+.patient-stat-top {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 17px;
+}
+
+.patient-stat-icon,
+.section-heading-icon {
+    width: 43px;
+    height: 43px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    border-radius: 12px;
+}
+
+.patient-stat-icon svg,
+.section-heading-icon svg,
+.patients-search-input-wrap svg,
+.patients-search-btn svg,
+.patient-action-btn svg,
+.empty-state-icon svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.stat-icon-blue {
+    background: #e9f3ff;
+    color: #0878e8;
+}
+
+.stat-icon-green {
+    background: #e6f8ef;
+    color: #16a36a;
+}
+
+.stat-icon-purple {
+    background: #f0eaff;
+    color: #8062df;
+}
+
+.stat-label {
+    color: #607895;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.patient-stat-number {
+    margin-bottom: 7px;
+    color: var(--patient-navy);
+    font-size: 32px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.patient-stat-caption {
+    color: #8293aa;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.patients-card {
+    overflow: hidden;
+    margin-bottom: 22px;
+    background: #fff;
+    border: 1px solid var(--patient-border);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(31, 71, 117, .035);
+}
+
+.patients-search-card {
+    padding: 22px;
+}
+
+.patients-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+}
+
+.section-heading-icon {
+    background: #eaf4ff;
+    color: #0878e8;
+}
+
+.patients-section-heading h2 {
+    margin: 0 0 5px;
+    color: var(--patient-navy);
+    font-size: 17px;
+    line-height: 1.4;
+    font-weight: 800;
+}
+
+.patients-section-heading p {
+    margin: 0;
+    color: var(--patient-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.patients-search-form {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-top: 21px;
+}
+
+.patients-search-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+    min-height: 46px;
+    padding: 0 13px;
+    border: 1px solid #d9e5f2;
+    border-radius: 10px;
+    background: #fbfdff;
+    color: #8ba0b9;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+.patients-search-input-wrap:focus-within {
+    border-color: #70b3fa;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(8, 120, 232, .09);
+}
+
+.patients-search-input-wrap svg {
+    width: 19px;
+    height: 19px;
+    flex: 0 0 auto;
+}
+
+.patients-search-input-wrap input {
+    width: 100%;
+    min-width: 0;
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--patient-text);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.patients-search-input-wrap input::placeholder {
+    color: #9aaabe;
+}
+
+.patients-search-btn {
+    min-height: 46px;
+    flex: 0 0 auto;
+}
+
+.patients-search-btn svg {
+    width: 17px;
+    height: 17px;
+}
+
+.patients-reset-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 15px;
+    border: 1px solid #dce7f3;
+    border-radius: 10px;
+    background: #fff;
+    color: #607895 !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.patients-reset-btn:hover {
+    background: #f4f8fd;
+}
+
+.patients-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px;
+    border-bottom: 1px solid #e8eff7;
+}
+
+.patients-result-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 6px 11px;
+    border-radius: 8px;
+    background: #eaf4ff;
+    color: #0878e8;
+    font-size: 12px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.patients-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+}
+
+.patients-table {
+    width: 100%;
+    min-width: 970px;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+}
+
+.patients-table thead th {
+    padding: 15px 17px;
+    background: #f5f9fe;
+    border-bottom: 1px solid #e4edf7;
+    color: #607895;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .25px;
+    white-space: nowrap;
+}
+
+.patients-table tbody td {
+    padding: 16px 17px;
+    border-bottom: 1px solid #edf2f8;
+    color: #526b88;
+    font-size: 12px;
+    line-height: 1.6;
+    vertical-align: middle;
+}
+
+.patients-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.patients-table tbody tr {
+    transition: background .15s;
+}
+
+.patients-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.patient-code {
+    display: inline-block;
+    padding: 5px 8px;
+    border: 1px solid #d9eaff;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #0878e8;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.patient-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 155px;
+}
+
+.patient-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 auto;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #e3f1ff, #d6e9ff);
+    color: #0878e8;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.patient-name-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.patient-name-text strong {
+    color: #19365c;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.patient-name-text span {
+    color: #91a1b5;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.patient-contact {
+    color: #385675;
+    white-space: nowrap;
+}
+
+.patient-email {
+    color: #526b88;
+    overflow-wrap: anywhere;
+}
+
+.patient-muted {
+    color: #9aa9bb;
+    font-size: 11px;
+    font-style: italic;
+}
+
+.patient-action-group {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+.patient-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 7px 9px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 750;
+    text-decoration: none !important;
+    transition: background .15s, border-color .15s;
+}
+
+.patient-action-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.patient-edit-btn {
+    border-color: #d9eaff;
+    background: #eff6ff;
+    color: #0878e8 !important;
+}
+
+.patient-edit-btn:hover {
+    border-color: #a9d1ff;
+    background: #e2efff;
+}
+
+.patient-delete-btn {
+    border-color: #ffe0e0;
+    background: #fff4f4;
+    color: #dc4545 !important;
+}
+
+.patient-delete-btn:hover {
+    border-color: #ffbebe;
+    background: #ffe9e9;
+}
+
+.patients-table-footer {
+    padding: 14px 22px;
+    border-top: 1px solid #e8eff7;
+    background: #fbfdff;
+    color: #8092a9;
+    font-size: 11px;
+}
+
+.patients-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px;
+    text-align: center;
+}
+
+.empty-state-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    margin-bottom: 15px;
+    border-radius: 17px;
+    background: #edf5ff;
+    color: #428fe5;
+}
+
+.empty-state-icon svg {
+    width: 27px;
+    height: 27px;
+}
+
+.patients-empty-state h3 {
+    margin: 0 0 7px;
+    color: var(--patient-navy);
+    font-size: 15px;
+}
+
+.patients-empty-state p {
+    margin: 0 0 18px;
+    color: var(--patient-muted);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.patients-messages {
+    margin-bottom: 18px;
+}
+
+.patients-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 9px;
+    padding: 13px 15px;
+    border: 1px solid #ccebd9;
+    border-radius: 10px;
+    background: #effaf3;
+    color: #167044;
+    font-size: 13px;
+}
+
+.patients-alert .alert-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    background: #d6f3e1;
+    font-weight: 800;
+}
+
+.patients-alert-error {
+    border-color: #ffd6d6;
+    background: #fff3f3;
+    color: #b42323;
+}
+
+.patients-alert-warning {
+    border-color: #ffe5b3;
+    background: #fff9eb;
+    color: #945c00;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+    .patients-stats {
+        gap: 12px;
+    }
+
+    .patient-stat-card {
+        padding: 17px;
+    }
+
+    .patient-stat-number {
+        font-size: 28px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+    .patients-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .patients-page-header .patients-primary-btn {
+        width: 100%;
+    }
+
+    .patients-stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .patient-stat-card {
+        padding: 17px;
+    }
+
+    .patient-stat-top {
+        margin-bottom: 11px;
+    }
+
+    .patient-stat-number {
+        font-size: 27px;
+    }
+
+    .patients-search-card {
+        padding: 17px;
+    }
+
+    .patients-section-heading {
+        align-items: flex-start;
+    }
+
+    .patients-section-heading h2 {
+        font-size: 15px;
+    }
+
+    .patients-search-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .patients-search-input-wrap {
+        width: 100%;
+        min-height: 46px;
+    }
+
+    .patients-search-btn,
+    .patients-reset-btn {
+        width: 100%;
+    }
+
+    .patients-list-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 17px;
+    }
+
+    .patients-list-header .patients-result-count {
+        align-self: flex-start;
+    }
+
+    .patients-table {
+        min-width: 970px;
+    }
+}
+</style>
+{% endblock %}

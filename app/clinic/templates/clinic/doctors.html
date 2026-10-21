@@ -1,0 +1,167 @@
+
+{% extends "clinic/base.html" %}
+{% block title %}Quản lý bác sĩ | ClinicCare{% endblock %}
+
+{% block content %}
+<style>
+.doctors-page{max-width:1550px;margin:0 auto;color:#173653}
+.doctors-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:28px}
+.doctors-heading h2{font-size:32px;font-weight:750;margin:0 0 8px;color:#123452}
+.doctors-heading p{margin:0;color:#71839a;font-size:15px}
+.doctors-heading-icon{width:72px;height:72px;display:grid;place-items:center;background:#e0f2fe;border-radius:22px;font-size:34px}
+.doctors-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-bottom:30px}
+.doctor-stat{background:#fff;border:1px solid #e4edf7;border-radius:20px;padding:24px;display:flex;align-items:center;gap:18px;box-shadow:0 7px 24px rgba(29,65,100,.06);min-height:112px}
+.doctor-stat-icon{width:60px;height:60px;flex:0 0 60px;display:grid;place-items:center;background:#eff6ff;border-radius:17px;font-size:27px}
+.doctor-stat-label{color:#71839a;font-size:14px;margin-bottom:7px}
+.doctor-stat-value{color:#123452;font-size:25px;font-weight:750;line-height:1.2}
+.doctors-card{background:#fff;border:1px solid #e4edf7;border-radius:20px;box-shadow:0 7px 24px rgba(29,65,100,.06);overflow:hidden;margin-bottom:26px}
+.doctors-search{padding:25px;margin-bottom:24px}
+.doctors-search h3,.doctors-list-heading h3{font-size:19px;font-weight:750;color:#173653;margin:0}
+.doctors-search h3{margin-bottom:16px}
+.doctors-search form{display:flex;align-items:center;gap:12px}
+.doctors-search input{flex:1;min-width:0;height:56px;padding:0 19px;border:1px solid #d9e3ef;border-radius:13px;background:#fff;font-size:16px;color:#173653;box-sizing:border-box}
+.doctors-search input:focus{outline:none;border-color:#3977f6;box-shadow:0 0 0 3px rgba(57,119,246,.12)}
+.doctors-search .btn{height:56px;display:inline-flex;align-items:center;justify-content:center;padding:0 22px;border:0;border-radius:12px;background:#2864ee;color:white;font-weight:700;text-decoration:none;white-space:nowrap;cursor:pointer}
+.doctors-search .reset-btn{background:#718096}
+.doctors-list-heading{padding:22px 25px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.doctors-list-heading h3{display:flex;align-items:center;gap:12px}
+.doctors-list-heading .add-doctor{background:#0f8078;color:white;padding:15px 21px;border-radius:12px;font-weight:700;text-decoration:none;white-space:nowrap}
+.doctors-page .table-wrap{width:100%;overflow-x:auto}
+.doctors-page table{width:100%;min-width:780px;border-collapse:collapse}
+.doctors-page thead{background:#f7f9fc}
+.doctors-page th{padding:18px 20px;text-align:left;font-size:14px;color:#3c5269;font-weight:750;border-top:1px solid #e5edf5;border-bottom:1px solid #e5edf5;white-space:nowrap}
+.doctors-page td{padding:18px 20px;border-bottom:1px solid #edf1f6;color:#243e59;font-size:14px;vertical-align:middle}
+.doctors-page tbody tr:last-child td{border-bottom:0}
+.doctors-page tbody tr:hover{background:#fbfdff}
+.doctor-id{color:#8495aa;white-space:nowrap}
+.doctor-name{display:flex;align-items:center;gap:13px;min-width:155px}
+.doctor-avatar{width:50px;height:50px;flex:0 0 50px;display:grid;place-items:center;background:#dceeff;border-radius:15px;font-size:25px}
+.doctor-name strong{display:block;color:#173653;font-size:15px;margin-bottom:4px}
+.doctor-subtitle{font-size:12px;color:#8495aa}
+.doctor-specialty{display:inline-block;background:#eff6ff;color:#2563eb;padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.doctor-contact{white-space:nowrap}
+.doctor-email{overflow-wrap:anywhere}
+.doctor-actions{display:flex;align-items:center;gap:9px;white-space:nowrap}
+.doctor-actions a{display:inline-flex;align-items:center;justify-content:center;padding:10px 13px;border:1px solid;border-radius:11px;text-decoration:none;font-weight:700;font-size:13px}
+.doctor-edit{color:#e56a36;border-color:#ffd0aa!important;background:#fffaf5}
+.doctor-delete{color:#dc3545;border-color:#ffc7cc!important;background:#fff8f8}
+.doctors-message{padding:13px 17px;margin:0 0 20px;border-radius:12px;background:#eaf7ef;color:#17663a}
+.doctors-empty{text-align:center;padding:36px!important;color:#8495aa!important}
+@media(max-width:850px){.doctors-stats{grid-template-columns:1fr;gap:14px}.doctor-stat{min-height:auto;padding:18px}.doctors-heading h2{font-size:26px}.doctors-search form{flex-wrap:wrap}.doctors-search input{flex-basis:100%}.doctors-search .btn{flex:1}.doctors-list-heading{padding:18px;align-items:flex-start}.doctors-list-heading .add-doctor{padding:12px;font-size:13px}}
+@media(max-width:480px){.doctors-heading-icon{width:52px;height:52px;font-size:25px}.doctors-search{padding:17px}.doctors-list-heading{flex-direction:column}.doctors-page th,.doctors-page td{padding:14px}}
+</style>
+
+<div class="doctors-page">
+    <header class="doctors-heading">
+        <div>
+            <h2>Quản lý bác sĩ</h2>
+            <p>Quản lý thông tin, chuyên khoa và liên hệ của đội ngũ bác sĩ.</p>
+        </div>
+        <div class="doctors-heading-icon" aria-hidden="true">👨‍⚕️</div>
+    </header>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="doctors-message">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <section class="doctors-stats">
+        <article class="doctor-stat">
+            <div class="doctor-stat-icon">👨‍⚕️</div>
+            <div>
+                <div class="doctor-stat-label">Số bác sĩ hiển thị</div>
+                <div class="doctor-stat-value">{{ doctors|length }}</div>
+            </div>
+        </article>
+        <article class="doctor-stat">
+            <div class="doctor-stat-icon">🏥</div>
+            <div>
+                <div class="doctor-stat-label">Chuyên khoa</div>
+                <div class="doctor-stat-value">🦷</div>
+            </div>
+        </article>
+        <article class="doctor-stat">
+            <div class="doctor-stat-icon">📞</div>
+            <div>
+                <div class="doctor-stat-label">Quản lý liên hệ</div>
+                <div class="doctor-stat-value">✓</div>
+            </div>
+        </article>
+    </section>
+
+    <section class="doctors-card doctors-search">
+        <h3>🔎 Tìm kiếm bác sĩ</h3>
+        <form method="get">
+            <input type="search" name="q" value="{{ query }}" placeholder="Tìm theo mã, họ tên, chuyên khoa, số điện thoại...">
+            <button class="btn" type="submit">🔍 Tìm kiếm</button>
+            {% if query %}
+                <a class="btn reset-btn" href="{% url 'doctors' %}">Đặt lại</a>
+            {% endif %}
+        </form>
+    </section>
+
+    <section class="doctors-card">
+        <div class="doctors-list-heading">
+            <h3><span aria-hidden="true">👨‍⚕️</span> Danh sách bác sĩ</h3>
+            <a class="add-doctor" href="{% url 'doctor_create' %}">＋ Thêm bác sĩ</a>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Bác sĩ</th>
+                        <th>Chuyên khoa</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doctor in doctors %}
+                    <tr>
+                        <td class="doctor-id">#{{ doctor.id }}</td>
+                        <td>
+                            <div class="doctor-name">
+                                <span class="doctor-avatar" aria-hidden="true">👨‍⚕️</span>
+                                <span>
+                                    <strong>{{ doctor.full_name }}</strong>
+                                    <span class="doctor-subtitle">Mã BS: BS{{ doctor.id|stringformat:"03d" }}</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td><span class="doctor-specialty">{{ doctor.specialty|default:"Chưa cập nhật" }}</span></td>
+                        <td class="doctor-contact">📞 {{ doctor.phone|default:"—" }}</td>
+                        <td class="doctor-email">✉️ {{ doctor.email|default:"—" }}</td>
+                        <td>
+                            <div class="doctor-actions">
+                                <a class="doctor-edit" href="{% url 'doctor_update' doctor.id %}">✏ Sửa</a>
+                             <form method="post"
+      action="{% url 'doctor_delete' doctor.id %}"
+      style="display:inline"
+      onsubmit="return confirm('Bạn có chắc chắn muốn xóa bác sĩ này không?');">
+    {% csrf_token %}
+    <button type="submit"
+            class="doctor-delete"
+            style="border:none;cursor:pointer;background:none;">
+        ▤ Xóa
+    </button>
+</form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="doctors-empty">
+                            Không tìm thấy bác sĩ phù hợp. Nhấn “Thêm bác sĩ” để tạo hồ sơ.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

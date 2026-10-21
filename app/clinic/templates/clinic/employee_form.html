@@ -1,0 +1,61 @@
+{% extends "clinic/base.html" %}
+{% block title %}{{ page_title }} | ClinicCare{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:22px">
+    <h2 style="margin:0 0 8px;color:#102b46">{{ page_title }}</h2>
+    <p style="margin:0;color:#718096">
+        Hồ sơ nhân viên và tài khoản đăng nhập hệ thống ClinicCare.
+    </p>
+</div>
+
+<section class="panel" style="max-width:850px">
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding:12px;margin-bottom:12px;border-radius:8px;background:#fff1f0;color:#a61b1b">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div style="color:#b91c1c;margin-bottom:12px">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px">
+            {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}"
+                           style="display:block;font-weight:600;margin-bottom:7px">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <small style="display:block;color:#718096;margin-top:5px">
+                            {{ field.help_text }}
+                        </small>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <small style="display:block;color:#dc3545;margin-top:5px">
+                            {{ error }}
+                        </small>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap">
+            <button class="btn" type="submit">Lưu thông tin</button>
+            <a class="btn" href="{% url 'employee_list' %}"
+               style="background:#718096">Quay lại</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

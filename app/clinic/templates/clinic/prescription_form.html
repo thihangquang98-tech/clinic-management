@@ -1,0 +1,56 @@
+
+{% extends "clinic/base.html" %}
+
+{% block content %}
+<div class="panel" style="max-width: 900px; margin: 0 auto;">
+    <div style="margin-bottom: 24px;">
+        <h2 style="margin-bottom: 8px;">{{ title|default:"Tạo đơn thuốc" }}</h2>
+        <p style="color: #64748b;">
+            Chọn hồ sơ khám bệnh và nhập lời dặn của bác sĩ.
+        </p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div role="alert" style="color: #b42318; margin-bottom: 16px;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            <div style="margin-bottom: 20px;">
+                <label for="{{ field.id_for_label }}"
+                       style="display: block; font-weight: 600; margin-bottom: 8px;">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <small style="display: block; color: #64748b;">
+                        {{ field.help_text }}
+                    </small>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <div role="alert" style="color: #b42318; margin-top: 6px;">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button type="submit" class="btn btn-primary">
+                Tạo đơn thuốc
+            </button>
+
+            <a href="{% url 'prescriptions' %}" class="btn btn-secondary">
+                Quay lại
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,333 @@
+
+{% extends "clinic/base.html" %}
+
+{% block content %}
+<style>
+.employee-page {
+    min-height: calc(100vh - 80px);
+    padding: 28px 26px;
+    background: #f3f6fb;
+    color: #143858;
+    font-family: Arial, sans-serif;
+}
+.employee-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.employee-title {
+    margin: 0 0 8px;
+    color: #143f68;
+    font-size: 23px;
+    font-weight: 800;
+}
+.employee-subtitle {
+    margin: 0;
+    color: #71849d;
+    font-size: 13px;
+}
+.employee-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px;
+    border-radius: 11px;
+    background: #176bb0;
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.employee-add:hover {
+    background: #125991;
+    color: #fff;
+}
+.employee-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+}
+.employee-stat {
+    min-height: 120px;
+    padding: 23px 20px;
+    border: 1px solid #dfe8f3;
+    border-radius: 14px;
+    background: #fff;
+}
+.employee-stat-label {
+    margin-bottom: 18px;
+    color: #71849d;
+    font-size: 13px;
+}
+.employee-stat-value {
+    color: #143f68;
+    font-size: 29px;
+    font-weight: 800;
+}
+.employee-stat:nth-child(2) .employee-stat-value {
+    color: #2477bf;
+}
+.employee-stat:nth-child(3) .employee-stat-value {
+    color: #168a68;
+}
+.employee-panel {
+    overflow: hidden;
+    border: 1px solid #dfe8f3;
+    border-radius: 14px;
+    background: #fff;
+}
+.employee-panel-heading {
+    padding: 25px 20px 21px;
+    border-bottom: 1px solid #e4ebf4;
+    color: #153f68;
+    font-size: 16px;
+    font-weight: 800;
+}
+.employee-table-wrap {
+    overflow-x: auto;
+}
+.employee-table {
+    width: 100%;
+    min-width: 750px;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+.employee-table thead {
+    background: #f7f9fd;
+}
+.employee-table th {
+    padding: 17px 19px;
+    color: #60758e;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+}
+.employee-table td {
+    padding: 15px 19px;
+    border-top: 1px solid #e8eef6;
+    color: #4c6380;
+    vertical-align: middle;
+}
+.employee-table tbody tr:hover {
+    background: #f8fbff;
+}
+.employee-username {
+    color: #143f68;
+    font-weight: 700;
+}
+.employee-name {
+    color: #304862;
+    font-weight: 500;
+}
+.employee-role {
+    display: inline-block;
+    padding: 7px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+.employee-role-doctor {
+    background: #e5f1ff;
+    color: #176bb0;
+}
+.employee-role-receptionist {
+    background: #e3f7ef;
+    color: #16866a;
+}
+.employee-role-admin {
+    background: #f0e9ff;
+    color: #7042b5;
+}
+.employee-role-other {
+    background: #eef2f7;
+    color: #596b80;
+}
+.employee-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.employee-action {
+    display: inline-block;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 12px;
+    white-space: nowrap;
+}
+.employee-action-edit {
+    color: #176bb0;
+    background: #e5f1ff;
+}
+.employee-action-edit:hover {
+    color: #125991;
+    background: #d6e9ff;
+}
+.employee-action-delete {
+    color: #c73f4b;
+    background: #fff0f0;
+}
+.employee-action-delete:hover {
+    color: #a72936;
+    background: #ffe0e2;
+}
+.employee-empty {
+    padding: 35px !important;
+    text-align: center;
+    color: #71849d !important;
+}
+.employee-alert {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 9px;
+    background: #e7f7ed;
+    color: #176c41;
+}
+@media (max-width: 760px) {
+    .employee-page {
+        padding: 18px 13px;
+    }
+    .employee-stats {
+        grid-template-columns: 1fr;
+    }
+    .employee-topbar {
+        align-items: flex-start;
+    }
+    .employee-add {
+        padding: 12px;
+    }
+}
+</style>
+
+<div class="employee-page">
+    <div class="employee-topbar">
+        <div>
+            <div class="employee-subtitle" style="margin-bottom:8px">
+                DentalCare / Phòng khám
+            </div>
+            <h1 class="employee-title">Danh sách nhân viên</h1>
+            <p class="employee-subtitle">
+                Quản lý tài khoản nhân sự của phòng khám nha khoa.
+            </p>
+        </div>
+
+        <a href="{% url 'employee_create' %}" class="employee-add">
+            <span>＋</span> Thêm nhân viên
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="employee-alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="employee-stats">
+        <div class="employee-stat">
+            <div class="employee-stat-label">Tổng tài khoản</div>
+            <div class="employee-stat-value">{{ employees|length }}</div>
+        </div>
+
+        <div class="employee-stat">
+            <div class="employee-stat-label">Bác sĩ</div>
+            <div class="employee-stat-value">{{ doctor_count }}</div>
+        </div>
+
+        <div class="employee-stat">
+            <div class="employee-stat-label">Lễ tân</div>
+            <div class="employee-stat-value">{{ receptionist_count }}</div>
+        </div>
+    </div>
+
+    <div class="employee-panel">
+        <div class="employee-panel-heading">Thông tin tài khoản</div>
+
+        <div class="employee-table-wrap">
+            <table class="employee-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên đăng nhập</th>
+                        <th>Họ và tên</th>
+                        <th>Vai trò</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.pk }}</td>
+
+                        <td>
+                            <span class="employee-username">
+                                {{ employee.user.username|default:"—" }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="employee-name">
+                                {{ employee.full_name }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% with role=employee.position %}
+                                {% if role == "Doctor" %}
+                                    <span class="employee-role employee-role-doctor">Bác sĩ</span>
+                                {% elif role == "Receptionist" %}
+                                    <span class="employee-role employee-role-receptionist">Lễ tân</span>
+                                {% elif role == "Admin" %}
+                                    <span class="employee-role employee-role-admin">Quản trị viên</span>
+                                {% else %}
+                                    <span class="employee-role employee-role-other">{{ role|default:"Nhân viên" }}</span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+
+                        <td>
+                            {% if employee.user.date_joined %}
+                                {{ employee.user.date_joined|date:"d/m/Y H:i" }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="employee-actions">
+                                <a class="employee-action employee-action-edit"
+                                   href="{% url 'employee_update' employee.pk %}">
+                                    Sửa
+                                </a>
+
+                                {% url 'employee_delete' employee.pk as delete_url %}
+                                {% if delete_url %}
+                                    <a class="employee-action employee-action-delete"
+                                       href="{{ delete_url }}">
+                                        Xóa
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="employee-empty">
+                            Chưa có nhân viên nào trong hệ thống.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
