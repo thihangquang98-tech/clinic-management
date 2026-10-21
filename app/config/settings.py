@@ -107,23 +107,6 @@ CSRF_TRUSTED_ORIGINS = [
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://192.168.20.128:8082",
-    "https://192.168.20.128:8443",
-    "http://localhost:8082",
-    "https://localhost:8443",
-    "http://127.0.0.1:8082",
-    "https://127.0.0.1:8443",
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://192.168.20.128:8082",
-    "https://192.168.20.128:8443",
-    "http://localhost:8082",
-    "https://localhost:8443",
-    "http://127.0.0.1:8082",
-    "https://127.0.0.1:8443",
-]
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "login"
