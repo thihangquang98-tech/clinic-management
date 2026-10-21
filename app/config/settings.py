@@ -7,7 +7,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get(
+        "DJANGO_ALLOWED_HOSTS",
+        "localhost,127.0.0.1,192.168.20.128",
+    ).split(",")
+    if host.strip()
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -91,22 +98,31 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 CSRF_TRUSTED_ORIGINS = [
     "http://192.168.20.128:8082",
+    "https://192.168.20.128:8443",
     "http://localhost:8082",
+    "https://localhost:8443",
     "http://127.0.0.1:8082",
+    "https://127.0.0.1:8443",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 CSRF_TRUSTED_ORIGINS = [
     "http://192.168.20.128:8082",
+    "https://192.168.20.128:8443",
     "http://localhost:8082",
+    "https://localhost:8443",
     "http://127.0.0.1:8082",
+    "https://127.0.0.1:8443",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://192.168.20.128:8082",
+    "https://192.168.20.128:8443",
     "http://localhost:8082",
+    "https://localhost:8443",
     "http://127.0.0.1:8082",
+    "https://127.0.0.1:8443",
 ]
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "/"
