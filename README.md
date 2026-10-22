@@ -73,11 +73,11 @@ docker compose -f docker-compose.yml \
 
 | Thành phần | Địa chỉ |
 |---|---|
-| Website HTTP | http://localhost:8082 |
-| Website HTTPS | https://localhost:8443 |
-| pgAdmin | http://localhost:5050 |
-| Prometheus | http://localhost:9091 |
-| Grafana | http://localhost:3001 |
+| Website HTTP | http://192.168.20.128:8082 |
+| Website HTTPS | https://192.168.20.128:8443 |
+| pgAdmin | http://192.168.20.128:5050 |
+| Prometheus | http://192.168.20.128:9091 |
+| Grafana | http://192.168.20.128:3001 |
 
 Thông tin đăng nhập được cấu hình trong `.env`. Không ghi mật khẩu thật
 vào README hoặc commit.

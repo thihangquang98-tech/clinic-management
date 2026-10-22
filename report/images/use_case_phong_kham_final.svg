@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1260" viewBox="0 0 1500 1260">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="750" y="38" text-anchor="middle" font-family="sans-serif" font-size="25" font-weight="bold" fill="#172554">SƠ ĐỒ USE CASE - QUẢN LÝ PHÒNG KHÁM</text>
+<text x="750" y="64" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#475569">Các chức năng được phân nhóm theo quyền truy cập trong mã nguồn</text>
+<rect x="35" y="90" width="1430" height="260" rx="14" fill="#f8fafc" stroke="#2563eb" stroke-width="2"/>
+<text x="58" y="118" font-family="sans-serif" font-size="17" font-weight="bold" fill="#2563eb">ADMIN</text>
+<circle cx="115" cy="170" r="13" fill="white" stroke="#2563eb" stroke-width="3"/>
+<line x1="115" y1="183" x2="115" y2="218" stroke="#2563eb" stroke-width="3"/>
+<line x1="96" y1="195" x2="134" y2="195" stroke="#2563eb" stroke-width="3"/>
+<line x1="115" y1="218" x2="99" y2="242" stroke="#2563eb" stroke-width="3"/>
+<line x1="115" y1="218" x2="131" y2="242" stroke="#2563eb" stroke-width="3"/>
+<text x="115" y="266" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#2563eb">Admin</text>
+<path d="M 135 195 L 300 195" fill="none" stroke="#2563eb" stroke-width="1.8"/>
+<path d="M 300 155 L 300 210" fill="none" stroke="#2563eb" stroke-width="1.8"/>
+<path d="M 300 155 L 440 155" fill="none" stroke="#2563eb" stroke-width="1.8"/>
+<ellipse cx="610" cy="155" rx="170" ry="21" fill="#ffffff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="610" y="160" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Quản lý nhân viên</text>
+<path d="M 300 210 L 440 210" fill="none" stroke="#2563eb" stroke-width="1.8"/>
+<ellipse cx="610" cy="210" rx="170" ry="21" fill="#ffffff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="610" y="215" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Quản lý thông tin bác sĩ</text>
+<path d="M 300 155 L 960 155" fill="none" stroke="#2563eb" stroke-width="1.8"/>
+<ellipse cx="1130" cy="155" rx="170" ry="21" fill="#ffffff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="1130" y="160" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Quản lý dịch vụ y tế</text>
+<path d="M 300 210 L 960 210" fill="none" stroke="#2563eb" stroke-width="1.8"/>
+<ellipse cx="1130" cy="210" rx="170" ry="21" fill="#ffffff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="1130" y="215" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Quản lý hóa đơn và thanh toán</text>
+<rect x="35" y="370" width="1430" height="400" rx="14" fill="#f8fafc" stroke="#0d9488" stroke-width="2"/>
+<text x="58" y="398" font-family="sans-serif" font-size="17" font-weight="bold" fill="#0d9488">LỄ TÂN</text>
+<circle cx="115" cy="520" r="13" fill="white" stroke="#0d9488" stroke-width="3"/>
+<line x1="115" y1="533" x2="115" y2="568" stroke="#0d9488" stroke-width="3"/>
+<line x1="96" y1="545" x2="134" y2="545" stroke="#0d9488" stroke-width="3"/>
+<line x1="115" y1="568" x2="99" y2="592" stroke="#0d9488" stroke-width="3"/>
+<line x1="115" y1="568" x2="131" y2="592" stroke="#0d9488" stroke-width="3"/>
+<text x="115" y="616" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#0d9488">Lễ Tân</text>
+<path d="M 135 545 L 300 545" fill="none" stroke="#0d9488" stroke-width="1.8"/>
+<path d="M 300 435 L 300 600" fill="none" stroke="#0d9488" stroke-width="1.8"/>
+<path d="M 300 435 L 440 435" fill="none" stroke="#0d9488" stroke-width="1.8"/>
+<ellipse cx="610" cy="435" rx="170" ry="21" fill="#ffffff" stroke="#0d9488" stroke-width="1.8"/>
+<text x="610" y="440" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Tra cứu và quản lý bệnh nhân</text>
+<path d="M 300 490 L 440 490" fill="none" stroke="#0d9488" stroke-width="1.8"/>
+<ellipse cx="610" cy="490" rx="170" ry="21" fill="#ffffff" stroke="#0d9488" stroke-width="1.8"/>
+<text x="610" y="495" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Tra cứu bác sĩ</text>
+<path d="M 300 545 L 440 545" fill="none" stroke="#0d9488" stroke-width="1.8"/>
+<ellipse cx="610" cy="545" rx="170" ry="21" fill="#ffffff" stroke="#0d9488" stroke-width="1.8"/>
+<text x="610" y="550" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Quản lý lịch hẹn</text>
+<path d="M 300 600 L 440 600" fill="none" stroke="#0d9488" stroke-width="1.8"/>
+<ellipse cx="610" cy="600" rx="170" ry="21" fill="#ffffff" stroke="#0d9488" stroke-width="1.8"/>
+<text x="610" y="605" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Tra cứu hồ sơ khám</text>
+<path d="M 300 435 L 960 435" fill="none" stroke="#0d9488" stroke-width="1.8"/>
+<ellipse cx="1130" cy="435" rx="170" ry="21" fill="#ffffff" stroke="#0d9488" stroke-width="1.8"/>
+<text x="1130" y="440" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Tra cứu dịch vụ y tế</text>
+<path d="M 300 490 L 960 490" fill="none" stroke="#0d9488" stroke-width="1.8"/>
+<ellipse cx="1130" cy="490" rx="170" ry="21" fill="#ffffff" stroke="#0d9488" stroke-width="1.8"/>
+<text x="1130" y="495" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Lập hóa đơn và ghi nhận thanh toán</text>
+<path d="M 300 545 L 960 545" fill="none" stroke="#0d9488" stroke-width="1.8"/>
+<ellipse cx="1130" cy="545" rx="170" ry="21" fill="#ffffff" stroke="#0d9488" stroke-width="1.8"/>
+<text x="1130" y="550" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Xem báo cáo và tổng quan dữ liệu</text>
+<rect x="35" y="790" width="1430" height="400" rx="14" fill="#f8fafc" stroke="#7c3aed" stroke-width="2"/>
+<text x="58" y="818" font-family="sans-serif" font-size="17" font-weight="bold" fill="#7c3aed">BÁC SĨ</text>
+<circle cx="115" cy="940" r="13" fill="white" stroke="#7c3aed" stroke-width="3"/>
+<line x1="115" y1="953" x2="115" y2="988" stroke="#7c3aed" stroke-width="3"/>
+<line x1="96" y1="965" x2="134" y2="965" stroke="#7c3aed" stroke-width="3"/>
+<line x1="115" y1="988" x2="99" y2="1012" stroke="#7c3aed" stroke-width="3"/>
+<line x1="115" y1="988" x2="131" y2="1012" stroke="#7c3aed" stroke-width="3"/>
+<text x="115" y="1036" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#7c3aed">Bác Sĩ</text>
+<path d="M 135 965 L 300 965" fill="none" stroke="#7c3aed" stroke-width="1.8"/>
+<path d="M 300 855 L 300 1020" fill="none" stroke="#7c3aed" stroke-width="1.8"/>
+<path d="M 300 855 L 440 855" fill="none" stroke="#7c3aed" stroke-width="1.8"/>
+<ellipse cx="610" cy="855" rx="170" ry="21" fill="#ffffff" stroke="#7c3aed" stroke-width="1.8"/>
+<text x="610" y="860" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Tra cứu bệnh nhân</text>
+<path d="M 300 910 L 440 910" fill="none" stroke="#7c3aed" stroke-width="1.8"/>
+<ellipse cx="610" cy="910" rx="170" ry="21" fill="#ffffff" stroke="#7c3aed" stroke-width="1.8"/>
+<text x="610" y="915" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Tra cứu bác sĩ và lịch hẹn</text>
+<path d="M 300 965 L 440 965" fill="none" stroke="#7c3aed" stroke-width="1.8"/>
+<ellipse cx="610" cy="965" rx="170" ry="21" fill="#ffffff" stroke="#7c3aed" stroke-width="1.8"/>
+<text x="610" y="970" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Tra cứu hồ sơ khám</text>
+<path d="M 300 1020 L 440 1020" fill="none" stroke="#7c3aed" stroke-width="1.8"/>
+<ellipse cx="610" cy="1020" rx="170" ry="21" fill="#ffffff" stroke="#7c3aed" stroke-width="1.8"/>
+<text x="610" y="1025" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Tạo / cập nhật hồ sơ khám</text>
+<path d="M 300 855 L 960 855" fill="none" stroke="#7c3aed" stroke-width="1.8"/>
+<ellipse cx="1130" cy="855" rx="170" ry="21" fill="#ffffff" stroke="#7c3aed" stroke-width="1.8"/>
+<text x="1130" y="860" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Quản lý đơn thuốc</text>
+<path d="M 300 910 L 960 910" fill="none" stroke="#7c3aed" stroke-width="1.8"/>
+<ellipse cx="1130" cy="910" rx="170" ry="21" fill="#ffffff" stroke="#7c3aed" stroke-width="1.8"/>
+<text x="1130" y="915" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Tra cứu dịch vụ y tế</text>
+<path d="M 300 965 L 960 965" fill="none" stroke="#7c3aed" stroke-width="1.8"/>
+<ellipse cx="1130" cy="965" rx="170" ry="21" fill="#ffffff" stroke="#7c3aed" stroke-width="1.8"/>
+<text x="1130" y="970" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#0f172a">Xem báo cáo và tổng quan dữ liệu</text>
+<text x="750" y="1220" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#475569">Ghi chú: superuser Django là ngoại lệ kỹ thuật, không phải vai trò nghiệp vụ Admin.</text>
+</svg>
