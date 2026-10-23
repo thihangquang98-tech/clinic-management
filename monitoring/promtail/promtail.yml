@@ -13,7 +13,7 @@ scrape_configs:
     pipeline_stages:
       - docker: {}
       - drop:
-          older_than: 1h
+          older_than: 45m
           drop_counter_reason: too_old
     static_configs:
       - targets:
